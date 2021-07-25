@@ -1,0 +1,28 @@
+{
+  "name": "Calories-Backend",
+  "version": "1.0.0",
+  "description": "mango plate clone coding project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon ./index.js"
+  },
+  "repository": "git+https://github.com/TeamCalories/Calories-Backend.git",
+  "keywords": [],
+  "author": "오인웅, 박선홍, 이경원",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.13.2",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
+    "nodemon": "^2.0.12",
+    "npm": "^7.19.1",
+    "bson-objectid": "^2.0.1",
+    "aws-sdk": "^2.950.0"
+  },
+  "type": "module"
+}
