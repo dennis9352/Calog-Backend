@@ -12,7 +12,6 @@ router.get("/search/:keyword", async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword)
-
       // let foodScore = await Food.find({name: nameKey})
       // for(let i = 0; i < food.length; i++){
       //   let distance = levenshtein.get(nameKey, foodScore[i]);
@@ -22,7 +21,9 @@ router.get("/search/:keyword", async (req, res) => {
       
 
 
-      let food = await Food.find({name: nameKey}).lean()
+      let food = await Food.find({$text: {$search: nameKey}},
+        { score: {$meta: "textScore"}}).sort({socre:{$meta: "textScore"}})
+      
       let foodList = []
       for(let i = 0; i < food.length; i++){
         foodList.push(food[i])

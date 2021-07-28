@@ -8,7 +8,8 @@ const connect = () => {
 
 mongoose.connect('mongodb://localhost:27017/calories', {
 	useNewUrlParser: true,
-	useUnifiedTopology: true
+	useUnifiedTopology: true,
+	useCreateIndex: true,
 }, err => {
 	if (err) console.error('MongoDB 에러', err)
 	else console.log('MongoDB 연결 성공')
