@@ -1,14 +1,9 @@
 import express from "express";
-import aRouter from "./a.js";
-import bRouter from "./b.js";
-import cRouter from "./c.js";
+import homeRouter from "./home.js";
 
 const router = express.Router();
 
-router.use("/a", aRouter);
-router.use("/b", bRouter);
-router.use("/c", cRouter);
-
+router.use("/home", homeRouter);
 
 
 export default router;

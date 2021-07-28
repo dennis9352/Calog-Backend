@@ -1,9 +1,5 @@
-import mongoose from 'mongoose'
+const levenshtein = require('fast-levenshtein');
 
-export const cSchema = new mongoose.Schema({
+let distance = levenshtein.get('back', 'book');
 
-
-
-});
-
-export default mongoose.model('C', cSchema)
+console.log(distance)
