@@ -1,5 +1,4 @@
 import express from "express";
-
 import userRouter from "./user.js";
 import recordRouter from "./record.js";
 import calendarRouter from "./calendar.js";
