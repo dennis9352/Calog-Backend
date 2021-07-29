@@ -26,8 +26,20 @@ const validateRegister = [
   validate,
 ];
 
+const validatedupnickname = [
+    body('nickname').notEmpty().withMessage('nickname is missing'),
+  validate,
+];
 
-router.post('/duplicate-email', async (req, res) => {
+const validatedupemail = [
+ 
+  body('email').isEmail().normalizeEmail().withMessage('invalid email'),
+  validate,
+];
+
+
+
+router.post('/duplicate-email',validatedupemail, async (req, res) => {
     const { email } = await req.body;
     console.log(email)
     const found_email = await User.findOne({email:email});
@@ -40,10 +52,10 @@ router.post('/duplicate-email', async (req, res) => {
 
 })
 
-router.post('/duplicate-nickname', async (req, res) => {
+router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
   const { nickname } = await req.body;
  
-  const found_nickname = await User.findOne({email:email});
+  const found_nickname = await User.findOne({nickname:nickname});
  
  if (found_nickname) {
    return res.status(409).json({ message: `${nickname} already exists` });
