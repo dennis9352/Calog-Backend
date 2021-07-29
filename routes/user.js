@@ -8,10 +8,7 @@ import { validate } from '../middlewares/validator.js';
 import dotenv from 'dotenv'
 dotenv.config()
 
-
 const router = express.Router();
-
-
 
 // TODO: Make it secure!
 const jwtSecretKey = process.env.JWT_SECRET;
