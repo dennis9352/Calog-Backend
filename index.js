@@ -16,7 +16,9 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.get("/", (req, res ) => {
+  res.status(200).send("hello")
+});
 app.use("/api", router);
 
 app.listen(process.env.PORT || 3000, () => {

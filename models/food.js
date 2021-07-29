@@ -1,9 +1,15 @@
 import mongoose from 'mongoose'
 
 export const foodSchema = new mongoose.Schema({
-    name: String,
-    forOne: Number,
-    kcal: Number,
+    name: {
+      type: String,
+    },
+    forOne: {
+      type: Number,
+    },
+    kcal: {
+      type: Number,
+    },
 });
 
 foodSchema.virtual("foodId").get(function () {
