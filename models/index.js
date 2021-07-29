@@ -6,7 +6,7 @@ const connect = () => {
 	}
 }
 
-mongoose.connect('mongodb://localhost:27017/calories', {
+mongoose.connect('mongodb://52.79.134.64/:27017/admin', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,
