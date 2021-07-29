@@ -12,7 +12,7 @@ const IP = process.env.IPADDRESS
 const dbId = process.env.DBID
 const dbPw = process.env.DBPW
 
-mongoose.connect('mongodb://localhost:27017/admin', {
+mongoose.connect('mongodb://localhost:27017/calories', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,

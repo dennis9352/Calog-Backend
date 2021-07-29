@@ -1,12 +1,21 @@
 import express from "express";
-import User from '../models/user.js'
+// import User from '../models/user.js'
+import Favorite from '../models/favorite.js'
+// import food from "../models/food.js";
 
 const router = express.Router();
 
-router.post('/favorite/add',authMiddleware, async(req, res)=>{
-    const {foodId, is_like} = req.body;
+router.post('/add',authMiddleware, async(req, res)=>{
+    const {foodId} = req.body;
     const {user} = res.locals;
     const userId = user.userId
 
-    await User.create({foodFavorites: [foodId, is_like ]})
+    const existUser = await Favorite.find({userId : userId})
+    if(!existUser){
+        await Favorite.create({userId : userId, foodId : foodId})
+    }else{
+        existUser.foodId.push(foodId)
+    }
+
+    
 })
