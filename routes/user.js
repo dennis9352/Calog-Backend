@@ -10,6 +10,7 @@ dotenv.config()
 
 const router = express.Router();
 
+
 // TODO: Make it secure!
 const jwtSecretKey = process.env.JWT_SECRET;
 const jwtExpiresInDays = '2d';
@@ -56,6 +57,7 @@ router.post('/duplicate-nickname', async (req, res) => {
 
 router.post('/register',validateRegister, async (req, res) => {
   // console.log(req.body)
+  try{
     const {email, password, nickname} = await req.body;
    
     const found_email = await User.findOne({email:email});
@@ -72,15 +74,21 @@ router.post('/register',validateRegister, async (req, res) => {
         password: hashed,
         nickname,
       }
-    User.create(userInfo, function(err, user){
+    await User.create(userInfo, function(err, user){
       if(err) return res.status(400).json(err);
       res.status(201).json({ result:'success' });
     });
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      "errorMessage" : "등록 실패"
+    })
+  }
   });
 
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({email});
+    const user = await User.findOne({email : email});
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -111,6 +119,7 @@ router.post('/register',validateRegister, async (req, res) => {
                           "nickname":user.nickname
                         });
                               })
+
 // router.post('/login', validateCredential, authController.login);
 
 // router.get('/me', isAuth, authController.me)
