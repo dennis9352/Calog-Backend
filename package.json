@@ -1,5 +1,5 @@
 {
-  "name": "Calories-Backend",
+  "name": "calories_backend",
   "version": "1.0.0",
   "description": "mango plate clone coding project",
   "main": "index.js",
