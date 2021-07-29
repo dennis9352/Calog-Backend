@@ -9,8 +9,7 @@ const connect = () => {
 mongoose.connect('mongodb://52.79.134.64/:27017/admin', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	user:"test",
-	pass:"test"
+	useCreateIndex: true,
 }, err => {
 	if (err) console.error('MongoDB 에러', err)
 	else console.log('MongoDB 연결 성공')

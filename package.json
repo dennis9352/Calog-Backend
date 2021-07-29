@@ -1,5 +1,5 @@
 {
-  "name": "Calories-Backend",
+  "name": "calories_backend",
   "version": "1.0.0",
   "description": "mango plate clone coding project",
   "main": "index.js",
@@ -13,19 +13,30 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.950.0",
+<<<<<<< HEAD
     "bcrypt": "^5.0.1",
+=======
+>>>>>>> 84483a138f24a56a78a89747504544e5c1c334cd
     "bson-objectid": "^2.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+<<<<<<< HEAD
     "express-validator": "^6.12.1",
+=======
+    "fast-levenshtein": "^3.0.0",
+>>>>>>> 84483a138f24a56a78a89747504544e5c1c334cd
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.2",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "nodemon": "^2.0.12",
+<<<<<<< HEAD
     "npm": "^7.19.1",
     "validator": "^13.6.0"
+=======
+    "npm": "^7.19.1"
+>>>>>>> 84483a138f24a56a78a89747504544e5c1c334cd
   },
   "type": "module"
 }

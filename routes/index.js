@@ -1,14 +1,20 @@
 import express from "express";
+
 import userRouter from "./user.js";
-import bRouter from "./b.js";
-import cRouter from "./c.js";
+import recordRouter from "./record.js";
+import calendarRouter from "./calendar.js";
+import homeRouter from "./home.js";
 
 const router = express.Router();
 
 router.use("/user", userRouter);
-router.use("/b", bRouter);
-router.use("/c", cRouter);
 
 
+
+const router = express.Router();
+
+router.use("/record", recordRouter);
+router.use("/calendar", calendarRouter);
+router.use("/home", homeRouter);
 
 export default router;
