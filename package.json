@@ -27,5 +27,8 @@
     "npm": "^7.19.1",
     "validator": "^13.6.0"
   },
+  "devDependencies": {
+    "is-svg": ">=4.2.2"
+  },
   "type": "module"
 }
