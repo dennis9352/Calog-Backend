@@ -8,7 +8,6 @@ const router = express.Router();
 router.use("/a", aRouter);
 router.use("/b", bRouter);
 router.use("/c", cRouter);
-
-
+//s
 
 export default router;
