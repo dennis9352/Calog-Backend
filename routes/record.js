@@ -57,6 +57,7 @@ const createExerciseRecord = async(exerciseList) => {
 router.post('/', async (req,res) => {
     const { doDate, foodList, exerciseList, content, userId } = req.body
     // const userId = req.user.userId
+    const bmr = userId.bmr
     const year = doDate.split('/')[0]
     const month = doDate.split('/')[1]
     const day = doDate.split('/')[2]
@@ -76,6 +77,7 @@ router.post('/', async (req,res) => {
             month: month,
             day: day,
             content: content,
+            bmr: bmr,
         })
         await record.save(async function () {
             try {
@@ -91,6 +93,11 @@ router.post('/', async (req,res) => {
         res.sendStatus(200)
     
     }else{              // 오늘 하루 칼로리 기록이 있을때 (추가)
+
+        if (record.bmr !== bmr){
+          record.bmr = bmr;
+          await record.save()
+        }
         createFoodRecord(foodList)
         createExerciseRecord(exerciseList) 
 
