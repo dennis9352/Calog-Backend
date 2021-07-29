@@ -2,7 +2,6 @@ import jwt, { decode } from 'jsonwebtoken';
 import User from'../models/users.js'
 import dotenv from 'dotenv'
 dotenv.config()
-console.log(process.env)
 const AUTH_ERROR = { message: 'Authentication Error' };
 
 export const isAuth = async (req, res, next) => {

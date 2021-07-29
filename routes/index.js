@@ -8,11 +8,6 @@ import homeRouter from "./home.js";
 const router = express.Router();
 
 router.use("/user", userRouter);
-
-
-
-const router = express.Router();
-
 router.use("/record", recordRouter);
 router.use("/calendar", calendarRouter);
 router.use("/home", homeRouter);

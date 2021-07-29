@@ -11,9 +11,8 @@ export const userSchema = new mongoose.Schema({
     age: { type: Number},
     goal: { type: Number},
     control: { type: String},
-    foodFavorites: mongoose.Schema.Types.ObjectId,
-    exerciseFavorites: mongoose.Schema.Types.ObjectId,
-    records: mongoose.Schema.Types.ObjectId
+    foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
+    records: {type: mongoose.Schema.Types.ObjectId,},
 });
 
 export default mongoose.model('User', userSchema)

@@ -1,7 +1,7 @@
 import express from "express";
 // import User from "../models/user.js"
 import FoodRecord from '../models/foodRecord.js'
-import { upload, S3 } from '../middlewares/imageUpload.js' 
+// import { upload, S3 } from '../middlewares/imageUpload.js' 
 
 const router = express.Router();
 

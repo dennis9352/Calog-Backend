@@ -2,9 +2,9 @@ import express from "express";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from'../models/users.js'
-import { isAuth } from '../middleware/auth.js';
+import { isAuth } from '../middlewares/auth.js';
 import { body } from 'express-validator';
-import { validate } from '../middleware/validator.js';
+import { validate } from '../middlewares/validator.js';
 import dotenv from 'dotenv'
 dotenv.config()
 
