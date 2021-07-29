@@ -1,6 +1,6 @@
 import express from "express";
 import Food from '../models/food.js'
-// import levenshtein from 'fast-levenshtein';
+import levenshtein from 'fast-levenshtein';
 
 
 
@@ -13,11 +13,13 @@ router.get("/search/:keyword", async (req, res) => {
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword)
 
-      // let foodScore = await Food.find({name: nameKey})
-      // for(let i = 0; i < food.length; i++){
-      //   let distance = levenshtein.get(nameKey, foodScore[i]);
-      //   await Food.update({}, {$set: {"score": distance}})
-      // }
+      let foodScore = await Food.find({name: nameKey})
+      for(let i = 0; i < food.length; i++){
+        let distance = levenshtein.get(nameKey, foodScore[i]);
+        await Food.updateOne({}, {$set: {"score": distance}})
+      }
+
+      
 
       
 
