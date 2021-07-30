@@ -47,7 +47,7 @@ router.delete('/delete',async(req, res) =>{
     }catch(err){
     console.log(err) 
     res.status(400).send({
-      "errorMessage": "즐겨찾기 해제중 에러발생"
+      "errorMessage": "즐겨찾기 삭제중 에러발생"
     }) 
 }
 })

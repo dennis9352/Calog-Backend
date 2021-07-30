@@ -75,7 +75,7 @@ router.get("/search/detail/:foodId", async (req, res) => {
     const {foodId} = req.params
     const foodDetail = await Food.findOne({_id : foodId});
     
-    //isLike 값 끌고오기?
+    
     res.send({
       foodDetail
     })
