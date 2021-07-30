@@ -1,5 +1,5 @@
 import express from "express";
-import Food from '../models/food.js'
+import Food from '../models/food.js';
 
 const router = express.Router();
 
@@ -9,8 +9,6 @@ router.get("/search/:keyword", async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword)
-
-     
       let food = await Food.find({$text: {$search: nameKey}},
         { score: {$meta: "textScore"}}).sort({socre:{$meta: "textScore"}})
       

@@ -5,7 +5,7 @@ export const favoriteSchema = new mongoose.Schema({
       type: String,
     },    
     foodId: {
-      type: [Number],
+      type: Array,
     },
 });
 

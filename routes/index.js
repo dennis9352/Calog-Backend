@@ -14,5 +14,4 @@ router.use("/record", recordRouter);
 router.use("/calendar", calendarRouter);
 router.use("/home", homeRouter);
 
-
 export default router;
