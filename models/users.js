@@ -5,13 +5,13 @@ export const userSchema = new mongoose.Schema({
     email: { type: String, required: true, trim: true, unique: true},
     password: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true, unique: true},
-    gender: { type: Number,},
+    gender: { type: String},
     weight: { type: Number},
     height: { type: Number},
     age: { type: Number},
     goal: { type: Number},
     control: { type: String},
-    foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
+    bmr: {type: Array},
     records: {type: mongoose.Schema.Types.ObjectId,},
 });
 
