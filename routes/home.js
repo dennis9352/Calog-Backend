@@ -11,8 +11,8 @@ router.get("/search/:keyword", async (req, res) => {
       const nameKey = new RegExp(keyword)
      
       let food = await Food.find({$text: {$search: nameKey}},
-        { score: {$meta: "textScore"}}).sort({socre:{$meta: "textScore"}})
-      
+        { score: {$meta: "textScore"}}).sort({score:{$meta: "textScore"}})
+      console.log(food)
       let foodList = []
       for(let i = 0; i < food.length; i++){
         foodList.push(food[i])
