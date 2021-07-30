@@ -1,5 +1,4 @@
 import express from "express";
-// import User from '../models/user.js'
 import Favorite from '../models/favorite.js'
 import Food from "../models/food.js";
 import {isAuth} from '../middlewares/auth.js'
