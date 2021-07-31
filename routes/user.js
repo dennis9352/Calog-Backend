@@ -137,12 +137,14 @@ router.post('/register',validateRegister, async (req, res) => {
 
 // router.get('/me', isAuth, authController.me)
 
-router.post('/bodySpec', async(req, res) => { //isAuth
+
+//바디스펙 기록
+router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   try{
-    // const {user} = res.locals;
-  // const userId = user.userId;
+  const {user} = res.locals;
+  const userId = user.userId;
   
-  const {gender, weight, height, age, goal, control, userId} = req.body;
+  const {gender, weight, height, age, control} = req.body;
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
@@ -151,7 +153,6 @@ router.post('/bodySpec', async(req, res) => { //isAuth
   targetUser.weight = Number(weight);
   targetUser.height = Number(height);
   targetUser.age = Number(age);
-  targetUser.goal = Number(goal);
   targetUser.control = control;
 
   if(gender === '남자'){

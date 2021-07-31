@@ -3,6 +3,7 @@ import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
 import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
+import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 //검색 API
@@ -11,9 +12,8 @@ router.get("/search/:keyword", async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword) //키워드 값에 정규식 적용
-      const {userId} = req.body;
-      // const {user} = res.locals  // 로그인한 유저와 로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
-      // const userId = user.userId 
+      const {user} = res.locals  // 로그인한 유저와 로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
+      const userId = user.userId 
 
       //키워드 입력안했을때 오류
       
