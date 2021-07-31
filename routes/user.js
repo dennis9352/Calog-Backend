@@ -137,6 +137,51 @@ router.post('/register',validateRegister, async (req, res) => {
 
 // router.get('/me', isAuth, authController.me)
 
+router.post('/bodySpec', async(req, res) => { //isAuth
+  try{
+    // const {user} = res.locals;
+  // const userId = user.userId;
+  
+  const {gender, weight, height, age, goal, control, userId} = req.body;
+  
+  const targetUser = await User.findOne({_id:userId})
+  const date = new Date()
+
+  targetUser.gender = gender;
+  targetUser.weight = Number(weight);
+  targetUser.height = Number(height);
+  targetUser.age = Number(age);
+  targetUser.goal = Number(goal);
+  targetUser.control = control;
+
+  if(gender === '남자'){
+    const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
+    targetUser.bmr = {
+      bmr: bmr,
+      date: date,
+    }
+  }else{
+    const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
+    targetUser.bmr = {
+      bmr: bmr,
+      date: date,
+    }
+  }
+  targetUser.save()
+  
+  res.sendStatus(200)
+
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "바디스펙 입력중 에러발생"
+    })
+    return;
+  }
+  
+
+})
+
 
 //바디스펙 기록
 router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
