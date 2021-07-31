@@ -25,8 +25,6 @@ mongoose.connection.on('error', err => {
 	connect()
 })
 
-
-
 // mongoose.connect(`mongodb://${dbId}:${dbPw}@${IP}:27017/admin`, {
 // 	dbName: 'calories',
 // 	useNewUrlParser: true,
@@ -44,4 +42,4 @@ mongoose.connection.on('error', err => {
 })
 
 
-// connect()
+connect()
