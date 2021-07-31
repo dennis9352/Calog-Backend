@@ -4,6 +4,8 @@ import qs from "qs"
 import User from'../models/users.js'
 import jwt from 'jsonwebtoken';
 
+
+
 const router = express.Router();
 const jwtSecretKey = process.env.JWT_SECRET;
 const jwtExpiresInDays = '2d';
@@ -28,7 +30,21 @@ router.get('/oauth', async (req, res) =>{
             code
           })
         });
-        
+    // try {
+    //   const url = `https://kauth.kakao.com/oauth/token`
+    //   tokenResponse = await axios({
+    //     method: "POST",
+    //     url,
+    //     headers: {
+    //       "content-type": "application/x-www-form-urlencoded"
+    //     },
+    //     data: qs.stringify({
+    //       grant_type: "authorization_code",
+    //       client_id: apikey,
+    //       redirect_uri: "http://localhost:3000/api/auth_kakao/oauth",
+    //       code
+    //     })
+    //   });
       } catch (error) {
         return res.json(error.data);
       }

@@ -29,6 +29,8 @@
     "multer-s3": "^2.9.0",
     "nodemon": "^2.0.12",
     "npm": "^7.19.1",
+    "passport": "^0.4.1",
+    "passport-naver": "^1.0.6",
     "request": "^2.88.2",
     "validator": "^13.6.0"
   },
