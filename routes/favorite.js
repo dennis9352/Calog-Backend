@@ -32,7 +32,7 @@ router.post('/add', isAuth, async(req, res)=>{  //isAuth
 })
 
 //즐겨찾기 해제
-router.delete('/delete', isAuth,async(req, res) =>{
+router.delete('/delete', isAuth, async(req, res) =>{
     try{
         const {foodId} = req.body;
         const {user} = res.locals;
