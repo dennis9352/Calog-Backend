@@ -9,7 +9,6 @@ export const userSchema = new mongoose.Schema({
     weight: { type: Number},
     height: { type: Number},
     age: { type: Number},
-    goal: { type: Number},
     control: { type: String},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
     records: {type: mongoose.Schema.Types.ObjectId,},
