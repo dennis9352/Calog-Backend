@@ -64,7 +64,7 @@ router.get('/list', isAuth, async(req, res)=>{
             res.sendStatus(204) //즐겨찾기에 등록된 음식 없음
         }else{
             let foodList = []
-            for(let i = 0; i < idList.length; i++){
+            for(let i = idList.length -1; i >= 0; i--){
                 const food = await Food.findOne({_id: idList[i]})
                 foodList.push(food)
             }
