@@ -30,37 +30,14 @@ const createFoodRecord = async (foodList) => {
     }
 }
 
-const createExerciseRecord = async(exerciseList) => {
-    for(let i in exerciseList){
-        let exerciseId = exerciseList[i].foodId
-        let quantity = exerciseList[i].quantity
-        let resultCalorie = exerciseList[i].resultCalorie
-
-        exerciseRecord = new FoodRecord({
-            exerciseId,
-            quantity,
-            resultCalorie,
-        });
-
-        await exerciseRecord.save(async function () {
-            try {
-              record.exerciseRecords.push(exerciseRecord._Id);
-              await record.save();
-            } catch (err) {
-              console.log(err);
-            }
-          });
-    }
-}
-
 
 router.post('/', async (req,res) => {
-    const { doDate, foodList, exerciseList, content, userId } = req.body
+    const { doDate, foodList, content, userId } = req.body
     // const userId = req.user.userId
     const bmr = userId.bmr
-    const year = doDate.split('/')[0]
-    const month = doDate.split('/')[1]
-    const day = doDate.split('/')[2]
+    const year = doDate.split('-')[0]
+    const month = doDate.split('-')[1]
+    const day = doDate.split('-')[2]
     // todo doDate 년,월,일 쪼개기
     try{
     const user = User.findById({userId})
@@ -87,8 +64,7 @@ router.post('/', async (req,res) => {
               console.log(err);
             }
           });
-        createFoodRecord(foodList)
-        createExerciseRecord(exerciseList)   
+        createFoodRecord(foodList)  
 
         res.sendStatus(200)
     
@@ -99,7 +75,6 @@ router.post('/', async (req,res) => {
           await record.save()
         }
         createFoodRecord(foodList)
-        createExerciseRecord(exerciseList) 
 
         res.sendStatus(200)
     }
@@ -113,23 +88,17 @@ router.post('/', async (req,res) => {
 
 router.put('/:recordId', async(req,res) => {
     const { recordId } = req.params;
-    const { doDate, foodList, exerciseList, content, userId } = req.body
+    const { doDate, foodList, content } = req.body
     // const userId = req.user.userId
-    // const year = doDate.split('/')[0]
-    // const month = doDate.split('/')[1]
-    // const day = doDate.split('/')[2]
-    // todo doDate 년,월,일 쪼개기
 
     const record = await Record.findById(recordId)
-    
+    record.doDate = doDate
+    record.content = content
     // for(let i in record.foodRecords){
     //     FoodRecord.findByIdandDelete(record.foodRecord[i])
     // }
     record.foodRecords = []
-    record.exerciseRecords = []
-    record.content = content
     createFoodRecord(foodList)
-    createExerciseRecord(exerciseList)
     await record.save()   
     res.sendStatus(200)
 })
