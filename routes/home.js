@@ -106,12 +106,11 @@ router.post('/search/mostUsed', async(req, res) => {
 
 //인기검색어 조회 API
 
-router.get("/search/mostUsedKeyword", async(req,res) =>{
+router.get("/mostUsedKey", async(req,res) =>{
   try{
-    const mostUsedKeyword = await MostUsed.find({}).sort("-times").limit(10);
-    console.log(mostUsedKeyword)
+    const mostUsedKey = await MostUsed.find({}).sort("-times").limit(10);
     res.send({
-      mostUsedKeyword
+      mostUsedKey
     })
 
   }catch(err){
