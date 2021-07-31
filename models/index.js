@@ -36,9 +36,31 @@ mongoose.connection.on('error', err => {
 // 	else console.log('MongoDB 연결 성공')
 // })
 
+<<<<<<< Updated upstream
 mongoose.connection.on('error', err => {
 	console.error('MongoDB 연결 에러', err)
 	connect()
 })
+=======
+// mongoose.connection.on('error', err => {
+// 	console.error('MongoDB 연결 에러', err)
+// 	connect()
+// })
 
-connect()
+// mongoose.connect(`mongodb://${dbId}:${dbPw}@${IP}:27017/admin`, {
+// 	dbName: 'calories',
+// 	useNewUrlParser: true,
+// 	useUnifiedTopology: true,
+// 	useCreateIndex: true,
+// }, err => {
+// 	if (err) console.error('MongoDB 에러', err)
+// 	else console.log('MongoDB 연결 성공')
+// })
+
+// mongoose.connection.on('error', err => {
+// 	console.error('MongoDB 연결 에러', err)
+// 	connect()
+// })
+>>>>>>> Stashed changes
+
+// connect()
