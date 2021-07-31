@@ -1,7 +1,7 @@
 {
   "name": "calories_backend",
   "version": "1.0.0",
-  "description": "mango plate clone coding project",
+  "description": "h99 final project Calories-backend",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
