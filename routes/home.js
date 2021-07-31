@@ -2,6 +2,7 @@ import express from "express";
 import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
 import levenshtein from 'fast-levenshtein';
+import MostUsed from '../models/mostUsed.js';
 const router = express.Router();
 
 //검색 API
@@ -73,6 +74,53 @@ router.get("/search/:keyword", async (req, res) => {
     return;
   }
     
+})
+
+//키워드별 조회수 기록 API
+
+router.post('/search/mostUsed', async(req, res) => {
+  try{
+    const {keyword} = req.body;
+    const existKeyword = await MostUsed.findOne({keyword:keyword})
+    
+    if (!existKeyword){
+      const times = 1
+      await MostUsed.create({keyword:keyword, times: times})
+    
+    }else{
+      existKeyword.times++
+      existKeyword.save()
+    }
+    res.sendStatus(200);
+
+
+
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "키워드 조회수 기록중 에러발생"
+    })
+    return;
+  }
+})
+
+//인기검색어 조회 API
+
+router.get("/search/mostUsedKeyword", async(req,res) =>{
+  try{
+    const mostUsedKeyword = await MostUsed.find({}).sort("-times").limit(10);
+    console.log(mostUsedKeyword)
+    res.send({
+      mostUsedKeyword
+    })
+
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "인기검색어 조회중 오류발생"
+    })
+    return;
+  }
 })
 
 //검색결과 상세페이지(음식) API
