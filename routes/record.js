@@ -8,13 +8,12 @@ const router = express.Router();
 router.post('/', async (req,res) => {
     const { date, foodList, content, url, userId, type} = req.body
     const user = await User.findById(userId).exec()
-    
-    const record = await Record.find({userId: userId, date: date}).exec()
-    
+    const record = await Record.findOne({userId: userId, date: date}).exec()
+    console.log(user)
     console.log(user.bmr)
     try{
     
-      if(!record.length) {   // 오늘 하루 칼로리 기록이 없을때 (생성)
+      if(!record) {   // 오늘 하루 칼로리 기록이 없을때 (생성)
         const newRecord = new Record({
             userId : userId,
             date : date,
@@ -22,7 +21,7 @@ router.post('/', async (req,res) => {
             bmr: bmr,
             url: url,
         })
-        console.log(newRecord)
+
         await newRecord.save(async function () {
             try {
               user.records.push(newRecord._Id);
@@ -38,8 +37,7 @@ router.post('/', async (req,res) => {
               let amount = foodList[i].amount
               let kcal = foodList[i].kcal
               let resultKcal = (kcal * amount)
-              Math.round(resultKcal)
-              console.log(resultKcal)
+
               let foodRecord = new FoodRecord({
                   foodId,
                   name,
