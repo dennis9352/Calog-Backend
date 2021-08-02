@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/users.js"
 import FoodRecord from '../models/foodRecord.js'
+import ObjectID from "bson-objectid";
 import Record from '../models/record.js'
 
 const router = express.Router();
@@ -9,27 +10,17 @@ router.post('/', async (req,res) => {
     const { date, foodList, content, url, userId, type} = req.body
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
-    console.log(user)
-    console.log(user.bmr)
+    const bmr = user.bmr
     try{
     
       if(!record) {   // 오늘 하루 칼로리 기록이 없을때 (생성)
-        const newRecord = new Record({
+          const newRecord = new Record({
             userId : userId,
             date : date,
             content: content,
             bmr: bmr,
             url: url,
-        })
-
-        await newRecord.save(async function () {
-            try {
-              user.records.push(newRecord._Id);
-              await user.save();
-            } catch (err) {
-              console.log(err);
-            }
-          });
+          })
 
           for(let i in foodList){
               let foodId = foodList[i].foodId
@@ -38,32 +29,48 @@ router.post('/', async (req,res) => {
               let kcal = foodList[i].kcal
               let resultKcal = (kcal * amount)
 
-              let foodRecord = new FoodRecord({
-                  foodId,
-                  name,
-                  amount,
-                  resultKcal,
-                  type,
+              let foodRecord = await FoodRecord.create({
+                  foodId : foodId,
+                  name : name,
+                  amount : amount,
+                  resultKcal : resultKcal,
+                  type: type,
               })
- 
-              await foodRecord.save(async function () {
-                  try {
-                    newRecord.foodRecords.push(foodRecord.foodRecordId);
-                    await newRecord.save();
-                  } catch (err) {
-                    console.log(err);
-                  }
-                });
-          }  
+                newRecord.foodRecords.push(foodRecord._id);
+            }
 
-        res.sendStatus(200)
-    
+            await newRecord.save(async function () {
+              try {
+                user.records.push(newRecord._Id);
+                await user.save();
+              } catch (err) {
+                console.log(err);
+              }
+            });
+            res.sendStatus(200)
     }else{              // 오늘 하루 칼로리 기록이 있을때 (추가)
+
         if (record.bmr !== bmr){
           record.bmr = bmr;
-          await record.save()
         }
-        // createFoodRecord(foodList)
+        for(let i in foodList){
+          let foodId = foodList[i].foodId
+          let name = foodList[i].name
+          let amount = foodList[i].amount
+          let kcal = foodList[i].kcal
+          let resultKcal = (kcal * amount)
+
+          let foodRecord = await FoodRecord.create({
+              foodId : foodId,
+              name : name,
+              amount : amount,
+              resultKcal : resultKcal,
+              type: type,
+          })
+            record.foodRecords.push(foodRecord._id);
+        }
+
+        await record.save()
 
         res.sendStatus(200)
     }
@@ -77,18 +84,36 @@ router.post('/', async (req,res) => {
 
 router.put('/:recordId', async(req,res) => {
     const { recordId } = req.params;
-    const { foodList, content } = req.body
+    const { foodList, content, url, type } = req.body
     // const userId = req.user.userId
-
+    
     const record = await Record.findById(recordId)
-
+    console.log(record.foodRecords[0])
     for(let i in record.foodRecords){                 //foodRecord에 있는 기록 삭제하기
-        FoodRecord.findByIdandDelete(record.foodRecord[i])
+        await FoodRecord.findByIdAndDelete(record.foodRecords[i])
     }
     
     record.content = content
+    record.url = url
     record.foodRecords = []                         //user record에 연결되어있는 foodRecords 비우고 다시 넣기
-    createFoodRecord(foodList)
+    
+    for(let i in foodList){
+      let foodId = foodList[i].foodId
+      let name = foodList[i].name
+      let amount = foodList[i].amount
+      let kcal = foodList[i].kcal
+      let resultKcal = (kcal * amount)
+
+      let foodRecord = await FoodRecord.create({
+          foodId : foodId,
+          name : name,
+          amount : amount,
+          resultKcal : resultKcal,
+          type: type,
+      })
+        record.foodRecords.push(foodRecord._id);
+    }
+
     await record.save()   
     res.sendStatus(200)
 })

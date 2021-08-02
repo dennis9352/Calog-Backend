@@ -10,7 +10,7 @@ export const foodRecordSchema = new mongoose.Schema({
     amount: { 
         type: String,
     },
-    resultkcal: {
+    resultKcal: {
         type: Number,
     },
     type: {

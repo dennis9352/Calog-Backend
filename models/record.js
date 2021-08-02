@@ -5,10 +5,10 @@ export const recordSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    foodRecords: {
+    foodRecords: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'foodRecord',
-    },
+        ref: 'FoodRecord'
+    }],
     content: {
         type: String,
     },
