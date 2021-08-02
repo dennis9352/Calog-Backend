@@ -5,36 +5,6 @@ import Record from '../models/record.js'
 
 const router = express.Router();
 
-// const createFoodRecord = async (foodList) => {
-//   let type = foodList.type
-//     for(let i in foodList){
-//         let foodId = foodList[i].foodId
-//         let name = foodList[i].name
-//         let amount = foodList[i].amount
-//         let kcal = foodList[i].kcal
-        
-//         let resultKcal = kcal * amount
-
-//         const foodRecord = new FoodRecord({
-//             foodId,
-//             name,
-//             amount,
-//             resultKcal,
-//             type,
-//         })
-
-//         await foodRecord.save(async function () {
-//             try {
-//               record.foodRecords.push(foodRecord._Id);
-//               await record.save();
-//             } catch (err) {
-//               console.log(err);
-//             }
-//           });
-//     }
-// }
-
-
 router.post('/', async (req,res) => {
     const { date, foodList, content, url, userId, type} = req.body
     const user = await User.findById(userId).exec()
