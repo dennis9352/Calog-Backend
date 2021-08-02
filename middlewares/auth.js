@@ -17,7 +17,7 @@ export const isAuth = async (req, res, next) => {
 
   try {
     const { userId } = jwt.verify(authToken, process.env.JWT_SECRET);
-    User.findOne(userId).then((user) => {
+    User.findById(userId).then((user) => {
       console.log(user)
       res.locals.user = user;
       next();

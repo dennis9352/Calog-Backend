@@ -11,6 +11,7 @@ dotenv.config()
 
 const router = express.Router();
 
+
 // TODO: Make it secure!
 const jwtSecretKey = process.env.JWT_SECRET;
 const jwtExpiresInDays = '2d';
@@ -69,6 +70,7 @@ router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
 
 router.post('/register',validateRegister, async (req, res) => {
   // console.log(req.body)
+  try{
     const {email, password, nickname} = await req.body;
    
     const found_email = await User.findOne({email:email});
@@ -85,15 +87,21 @@ router.post('/register',validateRegister, async (req, res) => {
         password: hashed,
         nickname,
       }
-    User.create(userInfo, function(err, user){
+    await User.create(userInfo, function(err, user){
       if(err) return res.status(400).json(err);
       res.status(201).json({ result:'success' });
     });
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      "errorMessage" : "등록 실패"
+    })
+  }
   });
 
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({email});
+    const user = await User.findOne({email : email});
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -116,12 +124,15 @@ router.post('/register',validateRegister, async (req, res) => {
 
 // router.get('/me', isAuth, authController.me)
 
-router.post('/bodySpec', async(req, res) => { //isAuth
+
+
+//바디스펙 기록
+router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   try{
-    // const {user} = res.locals;
-  // const userId = user.userId;
+  const {user} = res.locals;
+  const userId = user.userId;
   
-  const {gender, weight, height, age, goal, control, userId} = req.body;
+  const {gender, weight, height, age, control} = req.body;
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
@@ -130,7 +141,6 @@ router.post('/bodySpec', async(req, res) => { //isAuth
   targetUser.weight = Number(weight);
   targetUser.height = Number(height);
   targetUser.age = Number(age);
-  targetUser.goal = Number(goal);
   targetUser.control = control;
 
   if(gender === '남자'){

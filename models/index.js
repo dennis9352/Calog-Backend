@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import dotenv from "dotenv"
 
-
 dotenv.config()
 const connect = () => {
 	if (process.env.DEBUG !== 'false') {
@@ -21,10 +20,7 @@ mongoose.connect('mongodb://localhost:27017/calories', {
 	else console.log('MongoDB 연결 성공')
 })
 
-mongoose.connection.on('error', err => {
-	console.error('MongoDB 연결 에러', err)
-	connect()
-})
+
 
 // mongoose.connect(`mongodb://${dbId}:${dbPw}@${IP}:27017/admin`, {
 // 	dbName: 'calories',
@@ -36,15 +32,11 @@ mongoose.connection.on('error', err => {
 // 	else console.log('MongoDB 연결 성공')
 // })
 
-// mongoose.connection.on('error', err => {
-// 	console.error('MongoDB 연결 에러', err)
-// 	connect()
-// })
-
 
 mongoose.connection.on('error', err => {
 	console.error('MongoDB 연결 에러', err)
 	connect()
 })
+
 
 connect()

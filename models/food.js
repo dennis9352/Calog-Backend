@@ -12,6 +12,9 @@ export const foodSchema = new mongoose.Schema({
     },
     isLike:{
       type: Boolean,
+    },
+    distance:{
+      type: Number,
     }
 });
 

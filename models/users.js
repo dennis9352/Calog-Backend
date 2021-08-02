@@ -3,21 +3,17 @@ import findOrCreate from 'mongoose-findorcreate'
 
 
 export const userSchema = new mongoose.Schema({
-    social:{ type: String },
-    kakao_id: {type: Number},
-    googleId:{type: String},
-    naverId:{type: String},
-    email: { type: String,trim: true, unique: true},
-    password: { type: String, trim: true },
-    nickname: { type: String, trim: true },
-    gender: { type: Number,default: 0},
-    weight: { type: Number,default: 0},
-    height: { type: Number,default: 0},
-    age: { type: Number,default: 0},
-    goal: { type: Number, default: 0},
-    control: { type: String, default: 0},
+    // loginId: { type: String, required: true, trim: true, unique: true},
+    email: { type: String, required: true, trim: true, unique: true},
+    password: { type: String, required: true, trim: true },
+    nickname: { type: String, required: true, trim: true, unique: true},
+    gender: { type: String},
+    weight: { type: Number},
+    height: { type: Number},
+    age: { type: Number},
+    control: { type: String},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
     records: {type: mongoose.Schema.Types.ObjectId,},
 });
-userSchema.plugin(findOrCreate)
+
 export default mongoose.model('User', userSchema)
