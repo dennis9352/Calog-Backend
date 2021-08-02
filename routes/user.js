@@ -110,20 +110,8 @@ router.post('/register',validateRegister, async (req, res) => {
   }
   
   router.get('/me',isAuth, async (req, res) => {
-    const _id = req.userId
-    const user = await User.findOne({_id:_id});
-  
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-  console.log(user)
-  
-  res.status(200).json({ 
-                          "result":"success",
-                          "email": user.email,
-                          "nickname":user.nickname
-                        });
-                              })
+    res.send({ user: res.locals.user });
+  });
 // router.post('/login', validateCredential, authController.login);
 
 // router.get('/me', isAuth, authController.me)

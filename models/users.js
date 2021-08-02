@@ -1,8 +1,12 @@
 import mongoose from 'mongoose'
+import findOrCreate from 'mongoose-findorcreate'
+
 
 export const userSchema = new mongoose.Schema({
     social:{ type: String },
     kakao_id: {type: Number},
+    googleId:{type: String},
+    naverId:{type: String},
     email: { type: String,trim: true, unique: true},
     password: { type: String, trim: true },
     nickname: { type: String, trim: true },
@@ -15,5 +19,5 @@ export const userSchema = new mongoose.Schema({
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
     records: {type: mongoose.Schema.Types.ObjectId,},
 });
-
+userSchema.plugin(findOrCreate)
 export default mongoose.model('User', userSchema)
