@@ -6,29 +6,30 @@ export const recordSchema = new mongoose.Schema({
         required: true,
     },
     foodRecords: {
-        type: mongoose.Schema.Types.ObjectId
-    },
-    exerciseRecords: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'foodRecord',
     },
     content: {
         type: String,
-    },
-    foodTotal: {
-        type: Number,
-    },
-    exerciseTotal: {
-        type: Number,
     },
     bmr: {
         type: Number,
         required: true,
     },
-    doDate: {
-        type: Date,
+    date: {
+        type: String,
         required: true,
+    },
+    url: {
+        type: Array,
+        default: [],
     }
-
 });
+recordSchema.virtual("recordId").get(function () {
+    return this._id.toHexString();
+  });
+recordSchema.set("toJSON", {
+    virtuals: true,
+  });
 
 export default mongoose.model('Record', recordSchema)
