@@ -1,4 +1,6 @@
 import mongoose from 'mongoose'
+import findOrCreate from 'mongoose-findorcreate'
+
 
 export const userSchema = new mongoose.Schema({
     // loginId: { type: String, required: true, trim: true, unique: true},

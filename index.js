@@ -3,7 +3,8 @@ import cors from "cors";
 import router from "./routes/index.js";
 import dotenv from 'dotenv'
 import "./models/index.js";
-import passport from 'passport'; 
+import passport from 'passport';
+import session from 'express-session' 
 
 
 
@@ -15,6 +16,10 @@ const corsOption = {
     Credential: true,
     optionSuccessStatus: 200,
 };
+//passportsetting
+app.use(session({secret:'MySecret', resave: false, saveUninitialized:true}));
+app.use(passport.initialize()); 
+app.use(passport.session());
 
 
 app.use(passport.initialize()); 
@@ -23,6 +28,9 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
+app.get('/', (req, res) => {
+    res.send('ss')
+})
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("서버 연결 성공");
