@@ -3,11 +3,12 @@ import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
 import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
+import {checkPermission} from '../middlewares/checkPermission.js'
 const router = express.Router();
 
 //검색 API
 
-router.get("/search/:keyword", async (req, res) => {
+router.get("/search/:keyword", checkPermission, async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword) //키워드 값에 정규식 적용
