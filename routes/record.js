@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
     const { date, foodList, contents, url, type} = req.body
-    console.log(req.body)
+    const todayDate = new Date.now()
     
     if(!res.locals.user){                     // 비로그인유저
       res.send({"message" : "로그인유저가 아닙니다."})
@@ -18,10 +18,22 @@ router.post('/',checkPermission, async (req,res) => {
     const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
-    const bmr = user.bmr.bmr
+    let bmr = user.bmr[-1].bmr
     try{
     
       if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성)
+          if(date !== todayDate){             // 기록하려는 날짜가 오늘 날짜가 아니면
+            if(user.bmr[0].date < date){      // 기초대사량 첫번째 기록이 작성하려는 날짜전의 기록있다면 
+            for(let i in user.bmr){           
+              if(user.bmr[i].date < date){    // 작성하려는 날짜 전의 기초대사량 기록날짜중 가장 근접한 날짜의 기초대사량이 베이스가 된다.
+                 bmr = user.bmr[i].bmr
+              }
+            }
+            }else{                            // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
+              bmr = user.bmr[0].bmr
+              return
+            }
+          }
           const newRecord = new Record({
             userId : userId,
             date : date,
@@ -49,7 +61,6 @@ router.post('/',checkPermission, async (req,res) => {
 
             await newRecord.save(async function () {
               try {
-                
                 user.records.push(newRecord._id);   //해당 유저에 기록 저장
                 await user.save();
               } catch (err) {
@@ -59,7 +70,7 @@ router.post('/',checkPermission, async (req,res) => {
             res.sendStatus(200)
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
-        if (record.bmr.bmr !== bmr && record.bmr.date === date){    //기록의 기초대사량가 다르고 날짜가 같은 날짜이면 변경
+        if (record.bmr.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
           record.bmr.bmr = bmr;
         }
         for(let i in foodList){
@@ -83,8 +94,8 @@ router.post('/',checkPermission, async (req,res) => {
         const newUrl = oldUrl.concat(url)
         record.url = newUrl
         }
-
-        if(record.contents.length){    // 수정해야할 메모 array가 있으면 합치기
+        console.log(contents)
+        if(contents.length){    // 수정해야할 메모 array가 있으면 합치기
           const oldContents = record.contents 
           const newContents = oldContents.concat(contents)
           record.contents = newContents

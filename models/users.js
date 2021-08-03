@@ -15,7 +15,7 @@ export const userSchema = new mongoose.Schema({
     age: { type: Number},
     bmr: {type: Object},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
-    records: {type: mongoose.Schema.Types.ObjectId,},
+    records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
 
 export default mongoose.model('User', userSchema)
