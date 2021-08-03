@@ -5,8 +5,10 @@ dotenv.config()
 
 export const checkPermission = async (req, res, next) => {
     const authHeader = req.get('Authorization');
-    console.log(authHeader)
-    if(!authHeader){next()}
+    if(!authHeader){
+      next()
+      return;
+    } 
     const token = authHeader.split(' ')[1];
     // TODO: Make it secure!
     jwt.verify(
@@ -22,8 +24,6 @@ export const checkPermission = async (req, res, next) => {
         if (!user) {
           next()
         }
-        
-        console.log(user)
         res.locals.user = user;
         next();
       }

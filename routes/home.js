@@ -12,12 +12,12 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = new RegExp(keyword) //키워드 값에 정규식 적용
-      const {user} = res.locals  // 로그인한 유저와 로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
-      const userId = user.userId 
+      const {user} = res.locals  // 로그인한 유저와  로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
+      
 
       //키워드 입력안했을때 오류
       
-      if (!userId){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.
+      if (!user){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.
         let food =  await Food.find({name: nameKey}).lean()
         for(let i = 0; i < food.length; i++){
           let distance = levenshtein.get(nameKey, food[i]['name']);
@@ -36,9 +36,14 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         }
       
        
-      }else if(userId){ 
+      }else if(user){
+        const userId = user._id
         let food = await Food.find({name: nameKey}).lean()
         const favoriteFood = await Favorite.findOne({userId:userId}) //로그인 했으면 Favorite db collection에서 userId에 속해있는 foodId(즐겨찾기목록) 가져옴. 
+        if(!favoriteFood){   //로그인은 했지만, 즐겨찾기한 음식이 없을때
+          res.json({food})
+          return;
+        }
         const favoriteList = favoriteFood.foodId //[foodId1, foodId2...]
         
         

@@ -9,7 +9,7 @@ router.post('/add', isAuth, async(req, res)=>{  //isAuth
     try{
         const {foodId} = req.body;
         const {user} = res.locals;
-        const userId = user.userId
+        const userId = user._id
     
         const existUser = await Favorite.findOne({userId : userId})
 
@@ -36,7 +36,7 @@ router.delete('/delete', isAuth, async(req, res) =>{
     try{
         const {foodId} = req.body;
         const {user} = res.locals;
-        const userId = user.userId;
+        const userId = user._id;
         
         const existUser = await Favorite.findOne({userId : userId})
         existUser.foodId.remove(foodId) //userId에 맞는 foodId 삭제
@@ -56,7 +56,7 @@ router.delete('/delete', isAuth, async(req, res) =>{
 router.get('/list', isAuth, async(req, res)=>{
     try{
         const {user} = res.locals;
-        const userId = user.userId;
+        const userId = user._id;
     
         const existFood = await Favorite.findOne({userId:userId}) 
         let idList = existFood.foodId // [foodId1, foodId2....] 즐겨찾기에 등록된 foodId 모두 조회

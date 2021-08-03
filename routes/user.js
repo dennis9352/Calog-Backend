@@ -131,7 +131,7 @@ router.post('/register',validateRegister, async (req, res) => {
 router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   try{
   const {user} = res.locals;
-  const userId = user.userId;
+  const userId = user._id;
   
   const {gender, weight, height, age, control} = req.body;
   
