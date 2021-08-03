@@ -30,7 +30,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         }else{
           // res.send(food)  //문제 없을 시 foodList 값 내려줌.
           const sortingField = 'distance';
-          res.send(food.sort(function(a,b){
+          res.json(food.sort(function(a,b){
             return a[sortingField] - b[sortingField]
           }))
         }
@@ -64,7 +64,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         }else{
           // res.send(food) //문제 없을 시 foodList 값 내려줌.
           const sortingField = 'distance';
-          res.send(food.sort(function(a,b){
+          res.json(food.sort(function(a,b){
           return a[sortingField] - b[sortingField]
         }))
         }
@@ -114,7 +114,7 @@ router.post('/search/mostUsed', async(req, res) => {
 router.get("/mostUsedKey", async(req,res) =>{
   try{
     const mostUsedKey = await MostUsed.find({}).sort("-times").limit(10);
-    res.send({
+    res.json({
       mostUsedKey
     })
 
@@ -134,7 +134,7 @@ router.get("/search/detail/:foodId", async (req, res) => {
     const {foodId} = req.params
     const foodDetail = await Food.findOne({_id : foodId}); //params로 foodId를 받아 Food db collection에서 조회 
     
-    res.send({
+    res.json({
       foodDetail
     })
    
