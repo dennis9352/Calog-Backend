@@ -18,10 +18,10 @@ router.post('/',checkPermission, async (req,res) => {
     const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
-    const bmr = user.bmr
+    const bmr = user.bmr.bmr
     try{
     
-      if(!record) {   // 오늘 하루 칼로리 기록이 없을때 (생성)
+      if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성)
           const newRecord = new Record({
             userId : userId,
             date : date,
@@ -41,7 +41,7 @@ router.post('/',checkPermission, async (req,res) => {
                   foodId : foodId,
                   name : name,
                   amount : amount,
-                  resultKcal : resultKcal,
+                  resultKcal : Math.round(resultKcal),
                   type: type,
               })
                 newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
@@ -57,10 +57,10 @@ router.post('/',checkPermission, async (req,res) => {
               }
             });
             res.sendStatus(200)
-    }else{              // 오늘 하루 칼로리 기록이 이미 있을때 (추가)
+      }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
-        if (record.bmr !== bmr){
-          record.bmr = bmr;
+        if (record.bmr.bmr !== bmr && record.bmr.date === date){    //기록의 기초대사량가 다르고 날짜가 같은 날짜이면 변경
+          record.bmr.bmr = bmr;
         }
         for(let i in foodList){
           let foodId = foodList[i].foodId
@@ -78,11 +78,19 @@ router.post('/',checkPermission, async (req,res) => {
           })
             record.foodRecords.push(foodRecord._id);
         }
-        if(!url.length){
+        if(url.length){             // 수정해야할 이미지 array가 있으면 합치기
         const oldUrl = record.url
         const newUrl = oldUrl.concat(url)
         record.url = newUrl
         }
+
+        if(record.contents.length){    // 수정해야할 메모 array가 있으면 합치기
+          const oldContents = record.contents 
+          const newContents = oldContents.concat(contents)
+          record.contents = newContents
+        }
+
+
         await record.save()
 
         res.sendStatus(200)
@@ -90,7 +98,7 @@ router.post('/',checkPermission, async (req,res) => {
     }catch(err){
         console.log(err)
         res.status(400).send({
-            errorMessage: "등록에 실패했습니다."
+            errorMessage: "Record 등록에 실패했습니다."
         })
     }
 });
@@ -130,14 +138,12 @@ router.put('/:recordId', async(req,res) => {
     res.sendStatus(200)
 })
 
-router.delete('/:recordId', async(req,res) => {
-    const { recordId } = req.params;
+// router.delete('/:recordId', async(req,res) => {
+//     const { recordId } = req.params;
     
-    Record.findByIdandDelete(recordId);
-    res.sendStatus(200)
-})
-
-
+//     Record.findByIdandDelete(recordId);
+//     res.sendStatus(200)
+// })
 
 
 export default router;

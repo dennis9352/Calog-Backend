@@ -10,7 +10,8 @@ export const recordSchema = new mongoose.Schema({
         ref: 'FoodRecord'
     }],
     contents: {
-        type: String,
+        type: Array,
+        default: [],
     },
     bmr: {
         type: Number,
