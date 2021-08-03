@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from'../models/users.js'
 import { isAuth } from '../middlewares/auth.js';
+import { checkPermission } from "../middlewares/checkPermission.js";
 import { body } from 'express-validator';
 import { validate } from '../middlewares/validator.js';
 import dotenv from 'dotenv'
@@ -117,7 +118,7 @@ router.post('/register',validateRegister, async (req, res) => {
     return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
   }
   
-  router.get('/me',isAuth, async (req, res) => {
+  router.get('/me',checkPermission, async (req, res) => {
     res.send({ user: res.locals.user });
   });
 // router.post('/login', validateCredential, authController.login);
@@ -130,7 +131,7 @@ router.post('/register',validateRegister, async (req, res) => {
 router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   try{
   const {user} = res.locals;
-  const userId = user.userId;
+  const userId = user._id;
   
   const {gender, weight, height, age, control} = req.body;
   

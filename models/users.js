@@ -3,7 +3,9 @@ import findOrCreate from 'mongoose-findorcreate'
 
 
 export const userSchema = new mongoose.Schema({
-    // loginId: { type: String, required: true, trim: true, unique: true},
+    social:{type: String},
+    naverId:{type: String},
+    googleId:{type: String},
     email: { type: String, required: true, trim: true, unique: true},
     password: { type: String, required: true, trim: true },
     nickname: { type: String, required: true, trim: true, unique: true},
