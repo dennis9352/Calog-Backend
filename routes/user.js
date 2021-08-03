@@ -137,14 +137,18 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
-  const registerDate = date.toISOString()
 
-  const ryear = registerDate.getFullYear();
-  const rmonth = registerDate.getMonth();
-  const rdate = registerDate.getDate();
+  const ryear = date.getFullYear();
+  const rmonth = date.getMonth()+ 1;
+  const rdate = date.getDate();
+
+  const date2 = new Date(ryear, rmonth, rdate)
   
-  console.log(console.log(`${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`));
-
+  const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
+  console.log(date)
+  console.log(Date())
+  console.log(registerDate)
+  console.log(date2)
  
 
 
