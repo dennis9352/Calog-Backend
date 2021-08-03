@@ -3,7 +3,6 @@ import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
 import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
-import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 //검색 API
