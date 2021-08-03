@@ -137,7 +137,16 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
-  const date2 = String(date.getFullYear()) + "년 " + String(date.getMonth() + 1) + "월 " + String(date.getDate()) + "일 "
+  const registerDate = date.toISOString()
+
+  const ryear = registerDate.getFullYear();
+  const rmonth = registerDate.getMonth();
+  const rdate = registerDate.getDate();
+  
+  console.log(console.log(`${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`));
+
+ 
+
 
   targetUser.gender = gender;
   targetUser.weight = Number(weight);
@@ -148,13 +157,13 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
     const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
     targetUser.bmr = {
       bmr: Number(Math.round(bmr)),
-      date: date2,
+      date: date,
     }
   }else{
     const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
     targetUser.bmr = {
       bmr: Number(Math.round(bmr)),
-      date: date2,
+      date: date,
     }
   }
   targetUser.save()
@@ -182,20 +191,19 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
   
     const editUser = await User.findOne({_id: userId})
     const date = new Date()
-    const date2 = String(date.getFullYear()) + "년 " + String(date.getMonth() + 1) + "월 " + String(date.getDate()) + "일 "
 
 
     if(gender === '남자'){
       const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
       editUser.bmr = {
         bmr: Number(Math.round(bmr)),
-        date: date2,
+        date: date,
       }
     }else{
       const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
       editUser.bmr = {
         bmr: Number(Math.round(bmr)),
-        date: date2,
+        date: date,
       }
     }
     editUser.save()
