@@ -14,7 +14,12 @@ export const userSchema = new mongoose.Schema({
     height: { type: Number},
     age: { type: Number},
     control: { type: String},
-    bmr: { type: Number, default: 0,},
+    bmr: { 
+        type: Number, 
+        default: {
+            bmr:0,
+            date: new Date,
+        }},
     foodFavorites: {type: Array},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
