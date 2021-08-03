@@ -21,14 +21,16 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         let food =  await Food.find({name: nameKey}).lean()
         for(let i = 0; i < food.length; i++){
           let distance = levenshtein.get(nameKey, food[i]['name']);
+          const foodId = food[i]._id
           food[i].distance = distance
+          food[i].foodId = foodId
         }
          
         if(food.length ===0){
           res.sendStatus(204)   // 검색결과 없음.
           return;
         }else{
-          // res.send(food)  //문제 없을 시 foodList 값 내려줌.
+          // res.send(food)  //문제 없을 시 food 내려줌.
           const sortingField = 'distance';
           res.json(food.sort(function(a,b){
             return a[sortingField] - b[sortingField]
@@ -41,18 +43,38 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         let food = await Food.find({name: nameKey}).lean()
         const favoriteFood = await Favorite.findOne({userId:userId}) //로그인 했으면 Favorite db collection에서 userId에 속해있는 foodId(즐겨찾기목록) 가져옴. 
         if(!favoriteFood){   //로그인은 했지만, 즐겨찾기한 음식이 없을때
-          res.json({food})
-          return;
+          let food =  await Food.find({name: nameKey}).lean()
+          for(let i = 0; i < food.length; i++){
+            let distance = levenshtein.get(nameKey, food[i]['name']);
+            const foodId = food[i]._id
+            food[i].foodId = foodId
+            food[i].distance = distance
+            
+        }
+         
+          if(food.length ===0){
+            res.sendStatus(204)   // 검색결과 없음.
+            return;
+          }else{
+            // res.send(food)  //문제 없을 시 food 내려줌.
+            const sortingField = 'distance';
+            res.json(food.sort(function(a,b){
+              return a[sortingField] - b[sortingField]
+            }))
+          }
         }
         const favoriteList = favoriteFood.foodId //[foodId1, foodId2...]
         
-        
         for(let i = 0; i < food.length; i++){
           if(favoriteList.includes(food[i]['_id'])){
+            const foodId = food[i]._id
+            food[i].foodId = foodId
             let distance = levenshtein.get(nameKey, food[i]['name']);
             food[i].distance = distance
             food[i].isLike = true //favoriteList(즐겨찾기 목록)에 전체 검색결과에서의 foodId가 들어있으면 isLike: true 추가
           }else{
+            const foodId = food[i]._id
+            food[i].foodId = foodId
             let distance = levenshtein.get(nameKey, food[i]['name']);
             food[i].distance = distance
           }
