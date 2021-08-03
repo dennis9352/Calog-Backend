@@ -41,7 +41,8 @@ router.post('/', async (req,res) => {
 
             await newRecord.save(async function () {
               try {
-                user.records.push(newRecord._Id);
+                
+                user.records.push(newRecord._id);
                 await user.save();
               } catch (err) {
                 console.log(err);
