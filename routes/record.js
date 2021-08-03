@@ -22,7 +22,7 @@ router.post('/', async (req,res) => {
             url: url,
           })
 
-          for(let i in foodList){
+          for(let i in foodList){               //먹은 음식 하나씩 저장
               let foodId = foodList[i].foodId
               let name = foodList[i].name
               let amount = foodList[i].amount
@@ -36,13 +36,13 @@ router.post('/', async (req,res) => {
                   resultKcal : resultKcal,
                   type: type,
               })
-                newRecord.foodRecords.push(foodRecord._id);
+                newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
             }
 
             await newRecord.save(async function () {
               try {
                 
-                user.records.push(newRecord._id);
+                user.records.push(newRecord._id);   //해당 유저에 기록 저장
                 await user.save();
               } catch (err) {
                 console.log(err);
