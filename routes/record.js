@@ -2,11 +2,20 @@ import express from "express";
 import User from "../models/users.js"
 import FoodRecord from '../models/foodRecord.js'
 import Record from '../models/record.js'
+import { checkPermission } from "../middlewares/checkPermission.js";
 
 const router = express.Router();
 
-router.post('/', async (req,res) => {
-    const { date, foodList, content, url, userId, type} = req.body
+router.post('/',checkPermission, async (req,res) => {
+    const { date, foodList, contents, url, type} = req.body
+    console.log(req.body)
+    
+    if(!res.locals.user){                     // 비로그인유저
+      res.send({"message" : "로그인유저가 아닙니다."})
+      return;
+    }
+
+    const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
     const bmr = user.bmr
@@ -16,7 +25,7 @@ router.post('/', async (req,res) => {
           const newRecord = new Record({
             userId : userId,
             date : date,
-            content: content,
+            contents: contents,
             bmr: bmr,
             url: url,
           })
@@ -48,7 +57,7 @@ router.post('/', async (req,res) => {
               }
             });
             res.sendStatus(200)
-    }else{              // 오늘 하루 칼로리 기록이 있을때 (추가)
+    }else{              // 오늘 하루 칼로리 기록이 이미 있을때 (추가)
 
         if (record.bmr !== bmr){
           record.bmr = bmr;
@@ -69,7 +78,11 @@ router.post('/', async (req,res) => {
           })
             record.foodRecords.push(foodRecord._id);
         }
-
+        if(!url.length){
+        const oldUrl = record.url
+        const newUrl = oldUrl.concat(url)
+        record.url = newUrl
+        }
         await record.save()
 
         res.sendStatus(200)
@@ -84,16 +97,15 @@ router.post('/', async (req,res) => {
 
 router.put('/:recordId', async(req,res) => {
     const { recordId } = req.params;
-    const { foodList, content, url, type } = req.body
+    const { foodList, contents, url, type } = req.body
     // const userId = req.user.userId
     
     const record = await Record.findById(recordId)
-    console.log(record.foodRecords[0])
     for(let i in record.foodRecords){                 //foodRecord에 있는 기록 삭제하기
         await FoodRecord.findByIdAndDelete(record.foodRecords[i])
     }
     
-    record.content = content
+    record.contents = contents
     record.url = url
     record.foodRecords = []                         //user record에 연결되어있는 foodRecords 비우고 다시 넣기
     

@@ -9,7 +9,7 @@ export const recordSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'FoodRecord'
     }],
-    content: {
+    contents: {
         type: String,
     },
     bmr: {
