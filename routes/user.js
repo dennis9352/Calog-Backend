@@ -133,7 +133,7 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   const {user} = res.locals;
   const userId = user._id;
   
-  const {gender, weight, height, age, control} = req.body;
+  const {gender, weight, height, age} = req.body;
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
@@ -142,7 +142,6 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   targetUser.weight = Number(weight);
   targetUser.height = Number(height);
   targetUser.age = Number(age);
-  targetUser.control = control;
 
   if(gender === '남자'){
     const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
@@ -178,7 +177,7 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
   try{
     const {user} = res.locals;
     const userId = user._id;
-    const {gender, weight, height, age, control} = req.body;
+    const {gender, weight, height, age} = req.body;
   
     const editUser = await User.findOne({_id: userId})
     const date = new Date()
@@ -191,7 +190,7 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
       }
     }else{
       const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
-      targetUser.bmr = {
+      editUser.bmr = {
         bmr: Number(Math.round(bmr)),
         date: date,
       }
@@ -200,7 +199,7 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
 
     
 
-    await User.updateOne({_id: userId}, {$set: {gender: gender, weight: weight, height:height, age: age, control: control} })
+    await User.updateOne({_id: userId}, {$set: {gender: gender, weight: weight, height:height, age: age} })
     res.sendStatus(200);
     
 
