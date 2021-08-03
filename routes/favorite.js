@@ -68,7 +68,7 @@ router.get('/list', isAuth, async(req, res)=>{
                 const food = await Food.findOne({_id: idList[i]})
                 foodList.push(food)
             }
-            res.send(foodList); //즐겨찾기에 등록된 음식 리스트 내려줌.
+            res.json(foodList); //즐겨찾기에 등록된 음식 리스트 내려줌.
         }
 
     }catch(err){

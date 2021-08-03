@@ -133,7 +133,7 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   const {user} = res.locals;
   const userId = user._id;
   
-  const {gender, weight, height, age, control} = req.body;
+  const {gender, weight, height, age} = req.body;
   
   const targetUser = await User.findOne({_id:userId})
   const date = new Date()
@@ -142,18 +142,17 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   targetUser.weight = Number(weight);
   targetUser.height = Number(height);
   targetUser.age = Number(age);
-  targetUser.control = control;
 
   if(gender === '남자'){
     const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
     targetUser.bmr = {
-      bmr: bmr,
+      bmr: Number(Math.round(bmr)),
       date: date,
     }
   }else{
     const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
     targetUser.bmr = {
-      bmr: bmr,
+      bmr: Number(Math.round(bmr)),
       date: date,
     }
   }
@@ -170,6 +169,47 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   }
   
 
+})
+
+//바디스펙 수정
+
+router.put('/bodySpec/edit', isAuth, async(req, res) => {
+  try{
+    const {user} = res.locals;
+    const userId = user._id;
+    const {gender, weight, height, age} = req.body;
+  
+    const editUser = await User.findOne({_id: userId})
+    const date = new Date()
+
+    if(gender === '남자'){
+      const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
+      editUser.bmr = {
+        bmr: Number(Math.round(bmr)),
+        date: date,
+      }
+    }else{
+      const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
+      editUser.bmr = {
+        bmr: Number(Math.round(bmr)),
+        date: date,
+      }
+    }
+    editUser.save()
+
+    
+
+    await User.updateOne({_id: userId}, {$set: {gender: gender, weight: weight, height:height, age: age} })
+    res.sendStatus(200);
+    
+
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "바디스펙 수정중 에러발생"
+    })
+    return;
+  }
 })
 
 
