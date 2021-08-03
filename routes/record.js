@@ -18,7 +18,7 @@ router.post('/',checkPermission, async (req,res) => {
     const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
-    let bmr = user.bmr[-1].bmr
+    let bmr = user.bmr[user.bmr.length-1].bmr
     try{
     
       if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성)
@@ -70,8 +70,8 @@ router.post('/',checkPermission, async (req,res) => {
             res.sendStatus(200)
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
-        if (record.bmr.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
-          record.bmr.bmr = bmr;
+        if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
+          record.bmr = bmr;
         }
         for(let i in foodList){
           let foodId = foodList[i].foodId
