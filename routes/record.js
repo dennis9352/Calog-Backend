@@ -1,147 +1,177 @@
 import express from "express";
-// import User from "../models/user.js"
+import User from "../models/users.js"
 import FoodRecord from '../models/foodRecord.js'
-// import { upload, S3 } from '../middlewares/imageUpload.js' 
+import Record from '../models/record.js'
+import { checkPermission } from "../middlewares/checkPermission.js";
 
 const router = express.Router();
 
-const createFoodRecord = async (foodList) => {
-    for(let i in foodList){
-        let foodId = foodList[i].foodId
-        let quantity = foodList[i].quantity
-        let time = foodList[i].time
-        let resultCalorie = foodList[i].resultCalorie
-
-        foodRecord = new FoodRecord({
-            foodId,
-            quantity,
-            time,
-            resultCalorie,
-        })
-
-        await foodRecord.save(async function () {
-            try {
-              record.foodRecords.push(foodRecord._Id);
-              await record.save();
-            } catch (err) {
-              console.log(err);
-            }
-          });
+router.post('/',checkPermission, async (req,res) => {
+    const { date, foodList, contents, url, type} = req.body
+    const year = date.split('-')[0]
+    const month = date.split('-')[1]
+    const newdate = new Date()
+    const ryear = newdate.getFullYear();
+    const rmonth = newdate.getMonth() + 1;
+    const rdate = newdate.getDate();
+    const todayDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
+    
+    if(!res.locals.user){                     // 비로그인유저
+      res.send({"message" : "로그인유저가 아닙니다."})
+      return;
     }
-}
 
-const createExerciseRecord = async(exerciseList) => {
-    for(let i in exerciseList){
-        let exerciseId = exerciseList[i].foodId
-        let quantity = exerciseList[i].quantity
-        let resultCalorie = exerciseList[i].resultCalorie
-
-        exerciseRecord = new FoodRecord({
-            exerciseId,
-            quantity,
-            resultCalorie,
-        });
-
-        await exerciseRecord.save(async function () {
-            try {
-              record.exerciseRecords.push(exerciseRecord._Id);
-              await record.save();
-            } catch (err) {
-              console.log(err);
-            }
-          });
-    }
-}
-
-
-router.post('/', async (req,res) => {
-    const { doDate, foodList, exerciseList, content, userId } = req.body
-    // const userId = req.user.userId
-    const bmr = userId.bmr
-    const year = doDate.split('/')[0]
-    const month = doDate.split('/')[1]
-    const day = doDate.split('/')[2]
-    // todo doDate 년,월,일 쪼개기
+    const userId = res.locals.user._id
+    const user = await User.findById(userId).exec()
+    const record = await Record.findOne({userId: userId, date: date}).exec()
+    let bmr = user.bmr[user.bmr.length-1].bmr
+    console.log(user,record,bmr)
     try{
-    const user = User.findById({userId})
-    let record = await Record.find(
-        {
-          $and: [{ userId }, { doDate }]
-        }).exec()
-
-    if(!record) {   // 오늘 하루 칼로리 기록이 없을때 (생성)
-        let record = new Record({
+      if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성) 
+        if(date !== todayDate){               // 기록하려는 날짜가 오늘 날짜가 아니면
+            if(user.bmr[0].date < date){      // 기초대사량 첫번째 기록이 작성하려는 날짜전의 기록있다면 
+            for(let i in user.bmr){           
+              if(user.bmr[i].date < date){    // 작성하려는 날짜 전의 기초대사량 기록날짜중 가장 근접한 날짜의 기초대사량이 베이스가 된다.
+                 bmr = user.bmr[i].bmr
+              }
+            }
+            }else{                            // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
+              bmr = user.bmr[0].bmr
+            }
+          }
+          const newRecord = new Record({
             userId : userId,
-            doDate : doDate,
+            date : date,
+            contents: contents,
+            bmr: bmr,
+            url: url,
             year: year,
             month: month,
-            day: day,
-            content: content,
-            bmr: bmr,
-        })
-        await record.save(async function () {
-            try {
-              user.records.push(record._Id);
-              await user.save();
-            } catch (err) {
-              console.log(err);
+          })
+
+          for(let i in foodList){               //먹은 음식 하나씩 저장
+              let foodId = foodList[i].foodId
+              let name = foodList[i].name
+              let amount = foodList[i].amount
+              let kcal = foodList[i].kcal
+              let resultKcal = Math.round(kcal * amount)
+
+              let foodRecord = await FoodRecord.create({
+                  foodId : foodId,
+                  name : name,
+                  amount : amount,
+                  resultKcal : resultKcal,
+                  type: type,
+              })
+                newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
+                newRecord.totalCalories =+ resultKcal
+
             }
-          });
-        createFoodRecord(foodList)
-        createExerciseRecord(exerciseList)   
+            
+            await newRecord.save(async function () {
+              try {
+                user.records.push(newRecord._id);   //해당 유저에 기록 저장
+                await user.save();
+              } catch (err) {
+                console.log(err);
+              }
+            });
+            res.sendStatus(200)
+      }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
-        res.sendStatus(200)
-    
-    }else{              // 오늘 하루 칼로리 기록이 있을때 (추가)
-
-        if (record.bmr !== bmr){
+        if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
           record.bmr = bmr;
-          await record.save()
         }
-        createFoodRecord(foodList)
-        createExerciseRecord(exerciseList) 
+        for(let i in foodList){
+          let foodId = foodList[i].foodId
+          let name = foodList[i].name
+          let amount = foodList[i].amount
+          let kcal = foodList[i].kcal
+          let resultKcal = (kcal * amount)
+
+          let foodRecord = await FoodRecord.create({
+              foodId : foodId,
+              name : name,
+              amount : amount,
+              resultKcal : resultKcal,
+              type: type,
+          })
+            record.foodRecords.push(foodRecord._id);
+            record.totalCalories += resultKcal
+        }
+        if(url.length){             // 수정해야할 이미지 array가 있으면 합치기
+        const oldUrl = record.url
+        const newUrl = oldUrl.concat(url)
+        record.url = newUrl
+        }
+        
+        if(contents.length){    // 수정해야할 메모 array가 있으면 합치기
+          const oldContents = record.contents 
+          const newContents = oldContents.concat(contents)
+          record.contents = newContents
+        }
+
+
+        await record.save()
 
         res.sendStatus(200)
     }
     }catch(err){
         console.log(err)
         res.status(400).send({
-            errorMessage: "등록에 실패했습니다."
+            errorMessage: "Record 등록에 실패했습니다."
         })
     }
 });
 
-router.put('/:recordId', async(req,res) => {
+router.put('/:recordId',checkPermission, async(req,res) => {
     const { recordId } = req.params;
-    const { doDate, foodList, exerciseList, content, userId } = req.body
-    // const userId = req.user.userId
-    // const year = doDate.split('/')[0]
-    // const month = doDate.split('/')[1]
-    // const day = doDate.split('/')[2]
-    // todo doDate 년,월,일 쪼개기
-
+    const { foodList, contents, url, type } = req.body
+    const userId = req.user._id
     const record = await Record.findById(recordId)
+
+    if (record.userId !== userId){
+      res.status(400).send({
+        errorMessage: "유저정보가 일치하지 않습니다."
+      })
+    }
+
+    for(let i in record.foodRecords){                 //foodRecord에 있는 기록 삭제하기
+        await FoodRecord.findByIdAndDelete(record.foodRecords[i])
+    }
     
-    // for(let i in record.foodRecords){
-    //     FoodRecord.findByIdandDelete(record.foodRecord[i])
-    // }
-    record.foodRecords = []
-    record.exerciseRecords = []
-    record.content = content
-    createFoodRecord(foodList)
-    createExerciseRecord(exerciseList)
+    record.contents = contents
+    record.url = url
+    record.foodRecords = []                         //user record에 연결되어있는 foodRecords 비우고 다시 넣기
+    
+    for(let i in foodList){
+      let foodId = foodList[i].foodId
+      let name = foodList[i].name
+      let amount = foodList[i].amount
+      let kcal = foodList[i].kcal
+      let resultKcal = (kcal * amount)
+
+      let foodRecord = await FoodRecord.create({
+          foodId : foodId,
+          name : name,
+          amount : amount,
+          resultKcal : resultKcal,
+          type: type,
+      })
+        record.foodRecords.push(foodRecord._id);
+        record.totalCalories += resultKcal
+    }
+
     await record.save()   
     res.sendStatus(200)
 })
 
-router.delete('/:recordId', async(req,res) => {
-    const { recordId } = req.params;
+// router.delete('/:recordId', async(req,res) => {
+//     const { recordId } = req.params;
     
-    Record.findByIdandDelete(recordId);
-    res.sendStatus(200)
-})
-
-
+//     Record.findByIdandDelete(recordId);
+//     res.sendStatus(200)
+// })
 
 
 export default router;

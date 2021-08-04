@@ -2,17 +2,26 @@ import mongoose from 'mongoose'
 
 export const foodRecordSchema = new mongoose.Schema({
     foodId: {
-        type: mongoose.Schema.Types.ObjectId,
-    },
-    time: {
         type: String,
     },
-    quantity: { 
+    name: {
         type: String,
     },
-    resultCalorie: {
+    amount: { 
+        type: String,
+    },
+    resultKcal: {
         type: Number,
-    }
+    },
+    type: {
+        type: String,
+    },
 });
+foodRecordSchema.virtual("foodRecordId").get(function () {
+    return this._id.toHexString();
+  });
+foodRecordSchema.set("toJSON", {
+    virtuals: true,
+  });
 
 export default mongoose.model('FoodRecord', foodRecordSchema)

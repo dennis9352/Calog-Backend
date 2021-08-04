@@ -10,6 +10,12 @@ export const foodSchema = new mongoose.Schema({
     kcal: {
       type: Number,
     },
+    isLike:{
+      type: Boolean,
+    },
+    distance:{
+      type: Number,
+    }
 });
 
 foodSchema.virtual("foodId").get(function () {
