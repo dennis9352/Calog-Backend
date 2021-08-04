@@ -16,7 +16,7 @@ export const userSchema = new mongoose.Schema({
     age: { type: Number},
     bmr: {type: Object, default:{bmr: 0, date: String(new Date().getFullYear()) + "년 " + String(new Date().getMonth() + 1) + "월 " + String(new Date().getDate()) + "일 "}},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
-    records: {type: mongoose.Schema.Types.ObjectId,},
+    records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
 
 export default mongoose.model('User', userSchema)

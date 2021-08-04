@@ -5,12 +5,13 @@ export const recordSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    foodRecords: {
+    foodRecords: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'foodRecord',
-    },
-    content: {
-        type: String,
+        ref: 'FoodRecord'
+    }],
+    contents: {
+        type: Array,
+        default: [],
     },
     bmr: {
         type: Number,
@@ -20,9 +21,18 @@ export const recordSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    year: {
+        type: String,
+    },
+    month:{
+        type: String,
+    },
     url: {
         type: Array,
         default: [],
+    },
+    totalCalories:{
+        type: Number,
     }
 });
 recordSchema.virtual("recordId").get(function () {
