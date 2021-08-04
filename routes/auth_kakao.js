@@ -1,100 +1,35 @@
-import express from "express";
-import axios from "axios"
-import qs from "qs"
-import User from'../models/users.js'
+import express from 'express';
 import jwt from 'jsonwebtoken';
-
-
+import dotenv from 'dotenv'
+import passport from '../passport/KakaoStrategy.js'
+dotenv.config()
 
 const router = express.Router();
+
+
+// TODO: Make it secure!
 const jwtSecretKey = process.env.JWT_SECRET;
 const jwtExpiresInDays = '2d';
 
-router.get('/oauth', async (req, res) =>{
-    const { code }= req.query
-    const apikey = process.env.k_API_KEY 
-    console.log(code)
-    let tokenResponse;
-    try {
-        const url = `https://kauth.kakao.com/oauth/token`
-        tokenResponse = await axios({
-          method: "POST",
-          url,
-          headers: {
-            "content-type": "application/x-www-form-urlencoded"
-          },
-          data: qs.stringify({
-            grant_type: "authorization_code",
-            client_id: apikey,
-            redirect_uri: "http://52.78.116.106/api/auth_kakao/oauth",
-            code
-          })
-        });
-    // try {
-    //   const url = `https://kauth.kakao.com/oauth/token`
-    //   tokenResponse = await axios({
-    //     method: "POST",
-    //     url,
-    //     headers: {
-    //       "content-type": "application/x-www-form-urlencoded"
-    //     },
-    //     data: qs.stringify({
-    //       grant_type: "authorization_code",
-    //       client_id: apikey,
-    //       redirect_uri: "http://localhost:3000/api/auth_kakao/oauth",
-    //       code
-    //     })
-    //   });
-      } catch (error) {
-        return res.json(error.data);
-      }
 
-      const { access_token } = tokenResponse.data;
 
-  let userResponse;
+// 첫번째 코드 - 카카오 로그인하기
+router.get('/kakao', passport.authenticate('kakao'));
 
-  try {
-    userResponse = await axios({
-      method: "GET",
-      url: "https://kapi.kakao.com/v2/user/me",
-      headers: {
-        Authorization: `Bearer ${access_token}`
-      }
-    });
-  } catch (error) {
-    return res.json(error.data);
-  }
+// 두번째 코드 - callback URL
+router.get('/oauth', passport.authenticate('kakao', {
+  failureRedirect: '/',
+}), (req, res) => {
 
-  console.log(userResponse.data.id)
-    const kakao_id = userResponse.data.id
-    const social = "kaako"
-   
-
-    const user = await User.findOne({kakao_id:kakao_id});
-    if (user) {
-      console.log(user._id)
-      const token = createJwtToken(user._id)
-      return res.status(201).json({ token });
-    }
-
-    const kakaoInfo = {
-        social,
-        kakao_id
-    }
-
-    User.create(kakaoInfo, function(err, kuser){
-        if(err) return res.status(400).json(err);
-
-        const token = createJwtToken(kuser._id)
-        return res.status(201).json({ token });
-        
-      });
-
-})
-
+  const token = createJwtToken(req.user._id);
+  res.redirect('https://2k1.shop/');
+});
 function createJwtToken(id) {
-    return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
-  }
+  return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
+}
+
+
+
 
 
 export default router;

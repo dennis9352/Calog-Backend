@@ -41,10 +41,9 @@ const validatedupemail = [
 ];
 
 
-
+//이메일 중복체크
 router.post('/duplicate-email',validatedupemail, async (req, res) => {
     const { email } = await req.body;
-    console.log(email)
     const found_email = await User.findOne({email:email});
     
     if (found_email) {
@@ -54,7 +53,7 @@ router.post('/duplicate-email',validatedupemail, async (req, res) => {
     res.status(201).json({ "result":'success' });
 
 })
-
+//닉네임 중복체크
 router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
   const { nickname } = await req.body;
  
@@ -68,9 +67,8 @@ router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
 
 })
 
-
+//회원가입
 router.post('/register',validateRegister, async (req, res) => {
-  // console.log(req.body)
   try{
     const {email, password, nickname} = await req.body;
    
@@ -100,6 +98,8 @@ router.post('/register',validateRegister, async (req, res) => {
   }
   });
 
+
+//로그인 API
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({email : email});
@@ -118,13 +118,11 @@ router.post('/register',validateRegister, async (req, res) => {
     return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
   }
   
-  router.get('/me',checkPermission, async (req, res) => {
+  //로그인 유저 정보조회
+  router.get('/me',isAuth, async (req, res) => {
+    console.log(res.locals)
     res.send({ user: res.locals.user });
   });
-// router.post('/login', validateCredential, authController.login);
-
-// router.get('/me', isAuth, authController.me)
-
 
 
 //바디스펙 기록
@@ -136,8 +134,14 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   const {gender, weight, height, age} = req.body;
   
   const targetUser = await User.findOne({_id:userId})
+  
   const date = new Date()
+  const ryear = date.getFullYear();
+  const rmonth = date.getMonth() + 1;
+  const rdate = date.getDate();
 
+  const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
+  
   targetUser.gender = gender;
   targetUser.weight = Number(weight);
   targetUser.height = Number(height);
@@ -147,13 +151,13 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
     const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
     targetUser.bmr = {
       bmr: Number(Math.round(bmr)),
-      date: date,
+      date: registerDate,
     }
   }else{
     const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
     targetUser.bmr = {
       bmr: Number(Math.round(bmr)),
-      date: date,
+      date: registerDate,
     }
   }
   targetUser.save()
@@ -178,30 +182,44 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
     const {user} = res.locals;
     const userId = user._id;
     const {gender, weight, height, age} = req.body;
-  
+    await User.updateOne({_id:userId},{$set: {gender:gender, weight: weight, height: height, age: age}})  
+    
     const editUser = await User.findOne({_id: userId})
+  
+    
     const date = new Date()
+    const ryear = date.getFullYear();
+    const rmonth = date.getMonth() + 1;
+    const rdate = date.getDate();
+    const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
+
 
     if(gender === '남자'){
       const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
-      editUser.bmr = {
-        bmr: Number(Math.round(bmr)),
-        date: date,
+      if(editUser.bmr[editUser.bmr.length -1].date === registerDate){
+        editUser.bmr[editUser.bmr.length -1].bmr = Number(Math.round(bmr))
+        
+      }else{
+        editUser.bmr.push({bmr: Number(Math.round(bmr)), date: registerDate})
+        
       }
-    }else{
+      
+    }else{  //여자일때
+      const editUser = await User.findOne({_id: userId})
       const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
-      editUser.bmr = {
-        bmr: Number(Math.round(bmr)),
-        date: date,
+      if(editUser.bmr[editUser.bmr.length -1].date === registerDate){
+        editUser.bmr[editUser.bmr.length -1].bmr = Number(Math.round(bmr))
+      }else{
+        editUser.bmr.push({bmr: Number(Math.round(bmr)), date: registerDate})
       }
+      
     }
+
+    editUser.markModified('bmr')
     editUser.save()
-
-    
-
-    await User.updateOne({_id: userId}, {$set: {gender: gender, weight: weight, height:height, age: age} })
     res.sendStatus(200);
-    
+
+  
 
   }catch(err){
     console.log(err) 

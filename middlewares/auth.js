@@ -5,8 +5,10 @@ dotenv.config()
 const AUTH_ERROR = { message: 'Authentication Error' };
 
 export const isAuth = async (req, res, next) => {
+
   const authHeader = req.get('Authorization');
   if (!(authHeader && authHeader.startsWith('Bearer '))) {
+
     return res.status(401).json(AUTH_ERROR);
   }
 
@@ -19,14 +21,14 @@ export const isAuth = async (req, res, next) => {
       if (error) {
         return res.status(401).json(AUTH_ERROR);
       }
-      console.log(decoded.id)
+     
 
       const user = await User.findOne({"_id": decoded.id});
       if (!user) {
         return res.status(401).json(AUTH_ERROR);
       }
       
-      console.log(user)
+      
       res.locals.user = user;
       next();
     }
