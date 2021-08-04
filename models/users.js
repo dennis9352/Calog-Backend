@@ -20,7 +20,7 @@ export const userSchema = new mongoose.Schema({
     height: { type: Number},
     age: { type: Number},
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
-    foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
+    foodFavorites: {type: mongoose.Schema.Types.ObjectId},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
 
