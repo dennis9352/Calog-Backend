@@ -1,20 +1,29 @@
 import express from 'express';
-
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
 import passport from '../passport/NaverStrategy.js'
+dotenv.config()
 
 const router = express.Router();
+// TODO: Make it secure!
+const jwtSecretKey = process.env.JWT_SECRET;
+const jwtExpiresInDays = '2d';
 
-router.get('/login/naver', passport.authenticate('naver'));
+router.get('/naver', passport.authenticate('naver'));
 
-router.get('/oauth', function (req, res, next) {
-  passport.authenticate('naver', function (err, user) {
-    console.log('passport.authenticate(naver)실행');
-    if (!user) { return res.redirect('http://localhost:3000/login'); }
-    req.logIn(user, function (err) { 
-       console.log('naver/callback user : ', user);
-       return res.redirect('http://localhost:3000/');        
-    });
-  })(req, res);
+router.get('/oauth', passport.authenticate('naver', {
+  failureRedirect: '/',
+}), (req, res) => {
+
+  const token = createJwtToken(req.user._id);
+  console.log(token)
+
+  res.status(200).send(token);
 });
+function createJwtToken(id) {
+  return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
+}
+
+
 
 export default router;

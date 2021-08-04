@@ -1,6 +1,4 @@
 import mongoose from 'mongoose'
-import findOrCreate from 'mongoose-findorcreate'
-
 
 const date = new Date()
 const ryear = date.getFullYear();
@@ -9,12 +7,12 @@ const rdate = date.getDate();
 const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`
 
 export const userSchema = new mongoose.Schema({
-    social:{type: String},
-    naverId:{type: String},
-    googleId:{type: String},
-    email: { type: String, required: true, trim: true, unique: true},
-    password: { type: String, required: true, trim: true },
-    nickname: { type: String, required: true, trim: true, unique: true},
+    socialtype:{ type: String },
+    socialId:{ type: String },
+    email: { type: String,trim: true, unique: true},
+    password: { type: String, trim: true },
+    nickname: { type: String, trim: true },
+    profile_image: { type: String, trim: true },
     gender: { type: String},
     weight: { type: Number},
     height: { type: Number},
