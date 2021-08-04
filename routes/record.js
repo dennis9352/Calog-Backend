@@ -8,7 +8,9 @@ const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
     const { date, foodList, contents, url, type} = req.body
-    const todayDate = new Date.now()
+    const year = date.split('-')[0]
+    const month = date.split('-')[1]
+    const todayDate = "2021-08-25"
     
     if(!res.locals.user){                     // 비로그인유저
       res.send({"message" : "로그인유저가 아닙니다."})
@@ -19,19 +21,18 @@ router.post('/',checkPermission, async (req,res) => {
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
     let bmr = user.bmr[user.bmr.length-1].bmr
+    console.log(user,record,bmr)
     try{
-    
-      if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성)
-          if(date !== todayDate){             // 기록하려는 날짜가 오늘 날짜가 아니면
+      if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성) 
+        if(date !== todayDate){             // 기록하려는 날짜가 오늘 날짜가 아니면
             if(user.bmr[0].date < date){      // 기초대사량 첫번째 기록이 작성하려는 날짜전의 기록있다면 
             for(let i in user.bmr){           
               if(user.bmr[i].date < date){    // 작성하려는 날짜 전의 기초대사량 기록날짜중 가장 근접한 날짜의 기초대사량이 베이스가 된다.
                  bmr = user.bmr[i].bmr
               }
             }
-            }else{                            // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
+            }else{                        // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
               bmr = user.bmr[0].bmr
-              return
             }
           }
           const newRecord = new Record({
@@ -40,6 +41,8 @@ router.post('/',checkPermission, async (req,res) => {
             contents: contents,
             bmr: bmr,
             url: url,
+            year: year,
+            month: month,
           })
 
           for(let i in foodList){               //먹은 음식 하나씩 저장
@@ -47,18 +50,20 @@ router.post('/',checkPermission, async (req,res) => {
               let name = foodList[i].name
               let amount = foodList[i].amount
               let kcal = foodList[i].kcal
-              let resultKcal = (kcal * amount)
+              let resultKcal = Math.round(kcal * amount)
 
               let foodRecord = await FoodRecord.create({
                   foodId : foodId,
                   name : name,
                   amount : amount,
-                  resultKcal : Math.round(resultKcal),
+                  resultKcal : resultKcal,
                   type: type,
               })
                 newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
-            }
+                newRecord.totalCalories =+ resultKcal
 
+            }
+            
             await newRecord.save(async function () {
               try {
                 user.records.push(newRecord._id);   //해당 유저에 기록 저장
@@ -88,13 +93,14 @@ router.post('/',checkPermission, async (req,res) => {
               type: type,
           })
             record.foodRecords.push(foodRecord._id);
+            record.totalCalories += resultKcal
         }
         if(url.length){             // 수정해야할 이미지 array가 있으면 합치기
         const oldUrl = record.url
         const newUrl = oldUrl.concat(url)
         record.url = newUrl
         }
-        console.log(contents)
+        
         if(contents.length){    // 수정해야할 메모 array가 있으면 합치기
           const oldContents = record.contents 
           const newContents = oldContents.concat(contents)
@@ -143,6 +149,7 @@ router.put('/:recordId', async(req,res) => {
           type: type,
       })
         record.foodRecords.push(foodRecord._id);
+        record.totalCalories += resultKcal
     }
 
     await record.save()   
