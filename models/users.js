@@ -2,6 +2,11 @@ import mongoose from 'mongoose'
 import findOrCreate from 'mongoose-findorcreate'
 
 
+const date = new Date()
+const ryear = date.getFullYear();
+const rmonth = date.getMonth() + 1;
+const rdate = date.getDate();
+const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`
 
 export const userSchema = new mongoose.Schema({
     social:{type: String},
@@ -14,7 +19,7 @@ export const userSchema = new mongoose.Schema({
     weight: { type: Number},
     height: { type: Number},
     age: { type: Number},
-    bmr: {type: Object, default:{bmr: 0, date: String(new Date().getFullYear()) + "년 " + String(new Date().getMonth() + 1) + "월 " + String(new Date().getDate()) + "일 "}},
+    bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
