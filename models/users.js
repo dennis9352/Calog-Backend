@@ -16,7 +16,7 @@ export const userSchema = new mongoose.Schema({
     gender: { type: String },
     weight: { type: Number },
     height: { type: Number },
-    age: { type: Number},
+    age: { type: Number },
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
