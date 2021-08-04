@@ -15,7 +15,7 @@ export const userSchema = new mongoose.Schema({
     profile_image: { type: String, trim: true },
     gender: { type: String },
     weight: { type: Number },
-    height: { type: Number},
+    height: { type: Number },
     age: { type: Number},
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
     foodFavorites: {type: mongoose.Schema.Types.ObjectId},
