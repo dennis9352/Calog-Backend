@@ -6,11 +6,11 @@ sevices:
   - docker
 
 before_install:
-  - echo "start image"
-  - docker build -t dennis9352/docker -f Dockerfile.dev .
+  - echo "start creating image with dockerfile"
+  - docker build -t dennis9352/calories_backend/calories:latest -f Dockerfile.dev .
 
 script:
-  - docker run -e CI=true dennis9352/wodw npm run test --
+  - docker run -e CI=true dennis9352/calories_backend/calories:latest npm run test -- --coverage
 
 after_success:
-  - echo "success"
+  - echo "Test Success"
