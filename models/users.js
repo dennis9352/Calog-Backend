@@ -13,7 +13,7 @@ export const userSchema = new mongoose.Schema({
     naverId:{type: String},
     googleId:{type: String},
     email: { type: String, required: true, trim: true, unique: true},
-    password: { type: String, required: true, trim: true },
+    password: { type: String, required: true, trim: true},
     nickname: { type: String, required: true, trim: true, unique: true},
     gender: { type: String},
     weight: { type: Number},
