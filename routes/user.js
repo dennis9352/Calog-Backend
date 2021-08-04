@@ -41,7 +41,7 @@ const validatedupemail = [
 ];
 
 
-
+//이메일 중복체크
 router.post('/duplicate-email',validatedupemail, async (req, res) => {
     const { email } = await req.body;
     const found_email = await User.findOne({email:email});
@@ -53,7 +53,7 @@ router.post('/duplicate-email',validatedupemail, async (req, res) => {
     res.status(201).json({ "result":'success' });
 
 })
-
+//닉네임 중복체크
 router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
   const { nickname } = await req.body;
  
@@ -67,7 +67,7 @@ router.post('/duplicate-nickname',validatedupnickname, async (req, res) => {
 
 })
 
-
+//회원가입
 router.post('/register',validateRegister, async (req, res) => {
   try{
     const {email, password, nickname} = await req.body;
@@ -98,6 +98,8 @@ router.post('/register',validateRegister, async (req, res) => {
   }
   });
 
+
+//로그인 API
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({email : email});
@@ -116,13 +118,11 @@ router.post('/register',validateRegister, async (req, res) => {
     return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
   }
   
-  router.get('/me',checkPermission, async (req, res) => {
+  //로그인 유저 정보조회
+  router.get('/me',isAuth, async (req, res) => {
+    console.log(res.locals)
     res.send({ user: res.locals.user });
   });
-// router.post('/login', validateCredential, authController.login);
-
-// router.get('/me', isAuth, authController.me)
-
 
 
 //바디스펙 기록
