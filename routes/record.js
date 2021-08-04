@@ -24,14 +24,14 @@ router.post('/',checkPermission, async (req,res) => {
     console.log(user,record,bmr)
     try{
       if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성) 
-        if(date !== todayDate){             // 기록하려는 날짜가 오늘 날짜가 아니면
+        if(date !== todayDate){               // 기록하려는 날짜가 오늘 날짜가 아니면
             if(user.bmr[0].date < date){      // 기초대사량 첫번째 기록이 작성하려는 날짜전의 기록있다면 
             for(let i in user.bmr){           
               if(user.bmr[i].date < date){    // 작성하려는 날짜 전의 기초대사량 기록날짜중 가장 근접한 날짜의 기초대사량이 베이스가 된다.
                  bmr = user.bmr[i].bmr
               }
             }
-            }else{                        // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
+            }else{                            // 작성하려는 날짜 전의 기초대사량 기록이 없다면 후에 작성한 날짜중 가장 최근 날짜의 기초대사량이 베이스가 된다.
               bmr = user.bmr[0].bmr
             }
           }
