@@ -199,13 +199,9 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
       if(editUser.bmr[editUser.bmr.length -1].date === registerDate){
         editUser.bmr[editUser.bmr.length -1].bmr = Number(Math.round(bmr))
         
-        console.log(bmr)
-        console.log(editUser)
-        
-        editUser.save()
       }else{
         editUser.bmr.push({bmr: Number(Math.round(bmr)), date: registerDate})
-        editUser.save()
+        
       }
       
     }else{  //여자일때
@@ -213,13 +209,14 @@ router.put('/bodySpec/edit', isAuth, async(req, res) => {
       const bmr = 655.1 + ( 9.56 * weight + (1.85 * height) - (4.68 * age))
       if(editUser.bmr[editUser.bmr.length -1].date === registerDate){
         editUser.bmr[editUser.bmr.length -1].bmr = Number(Math.round(bmr))
-        editUser.save()
       }else{
         editUser.bmr.push({bmr: Number(Math.round(bmr)), date: registerDate})
-        editUser.save()
       }
       
     }
+
+    editUser.markModified('bmr')
+    editUser.save()
     res.sendStatus(200);
 
   
