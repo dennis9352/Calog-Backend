@@ -4,9 +4,10 @@
   "description": "h99 final project Calories-backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon ./index.js",
-    "product": "node index.js"
+    "test": "exit",
+    "dev": "npx nodemon ./index.js",
+    "product": "node index.js",
+    "start":"pm2 start index.js"
   },
   "repository": "git+https://github.com/TeamCalories/Calories-Backend.git",
   "keywords": [],
