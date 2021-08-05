@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon ./index.js"
+    "start": "npx nodemon ./index.js",
+    "product": "node index.js"
   },
   "repository": "git+https://github.com/TeamCalories/Calories-Backend.git",
   "keywords": [],

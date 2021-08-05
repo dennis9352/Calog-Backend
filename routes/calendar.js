@@ -1,10 +1,51 @@
 import express from "express";
+import { isAuth } from "../middlewares/auth.js";
 import { checkPermission } from "../middlewares/checkPermission.js";
 import Record from "../models/record.js"
+import User from "../models/users.js"
 
 const router = express.Router();
 
-router.get('/:date',checkPermission, async(req, res) => {
+router.get('/dash',checkPermission, async(req, res) => {
+    const checkUser = res.locals.user
+
+    if(!checkUser){                     // 비로그인유저
+        res.status(400).send({"message" : "로그인유저가 아닙니다."})
+        return;
+    }
+    
+    const userId = res.locals.user._id
+    const newdate = new Date()
+    const ryear = newdate.getFullYear();
+    const rmonth = newdate.getMonth() + 1;
+    const rdate = newdate.getDate();
+    const todayDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
+    
+    const user = await User.findById(userId)
+    const userHeight = user.height
+    const userWeight = user.weight
+    
+    if(!userHeight || !userWeight){
+        res.status(400).send({
+            "message" : "바디스펙 정보가 없습니다"
+        })
+        return
+    }
+    const record = await Record.find(
+        {
+            $and : [{ userId : userId }, { date : todayDate }]
+        }).populate("foodRecords").exec()
+    
+    if(!record.length){
+        res.status(400).send({
+            "message" : "기록이 없습니다" 
+        })
+        return
+    }
+    res.json({record})
+});
+
+router.get('/:date', isAuth, async(req, res) => {
     const { date } = req.params;
     const year = date.split('-')[0]
     const month = date.split('-')[1]
@@ -20,7 +61,7 @@ router.get('/:date',checkPermission, async(req, res) => {
     res.status(200).json({ record })
 })
 
-router.get('/detail/:date',checkPermission, async(req, res) => {
+router.get('/detail/:date', isAuth, async(req, res) => {
     const { date } = req.params;
     const userId = res.locals.user._id
 
@@ -31,5 +72,6 @@ router.get('/detail/:date',checkPermission, async(req, res) => {
  
     res.status(200).json({ record })
 })
+
 
 export default router;

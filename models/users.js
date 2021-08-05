@@ -13,7 +13,7 @@ export const userSchema = new mongoose.Schema({
     password: { type: String, trim: true },
     nickname: { type: String, trim: true },
     profile_image: { type: String, trim: true },
-    gender: { type: String},
+    gender: { type: String },
     weight: { type: Number},
     height: { type: Number},
     age: { type: Number},
