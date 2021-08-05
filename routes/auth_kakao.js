@@ -22,7 +22,9 @@ router.get('/oauth', passport.authenticate('kakao', {
 }), (req, res) => {
 
   const token = createJwtToken(req.user._id);
-  res.redirect('https://2k1.shop/');
+  res.cookie("x_auth",token)
+    .status(200)
+    .redirect("/")
 });
 function createJwtToken(id) {
   return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
