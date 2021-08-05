@@ -14,7 +14,6 @@ const dbPw = process.env.DBPW
 mongoose.connect('mongodb://localhost:27017/calories', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	useCreateIndex: true,
 }, err => {
 	if (err) console.error('MongoDB 에러', err)
 	else console.log('MongoDB 연결 성공')
@@ -26,7 +25,6 @@ mongoose.connect('mongodb://localhost:27017/calories', {
 // 	dbName: 'calories',
 // 	useNewUrlParser: true,
 // 	useUnifiedTopology: true,
-// 	useCreateIndex: true,
 // }, err => {
 // 	if (err) console.error('MongoDB 에러', err)
 // 	else console.log('MongoDB 연결 성공')
