@@ -3,6 +3,8 @@ import { isAuth } from "../middlewares/auth.js";
 import { checkPermission } from "../middlewares/checkPermission.js";
 import Record from "../models/record.js"
 import User from "../models/users.js"
+import moment from "moment"
+
 
 const router = express.Router();
 
@@ -15,12 +17,9 @@ router.get('/dash',checkPermission, async(req, res) => {
     }
     
     const userId = res.locals.user._id
-    const newdate = new Date()
-    const ryear = newdate.getFullYear();
-    const rmonth = newdate.getMonth() + 1;
-    const rdate = newdate.getDate();
-    const todayDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
-    
+    const newdate = moment()
+    const todayDate = newdate.format('YYYY-MM-DD')
+    console.log(todayDate)
     const user = await User.findById(userId)
     const userHeight = user.height
     const userWeight = user.weight
