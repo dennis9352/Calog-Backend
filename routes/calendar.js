@@ -10,7 +10,7 @@ router.get('/dash',checkPermission, async(req, res) => {
     const checkUser = res.locals.user
 
     if(!checkUser){                     // 비로그인유저
-        res.send({"message" : "로그인유저가 아닙니다."})
+        res.status(400).send({"message" : "로그인유저가 아닙니다."})
         return;
     }
     
