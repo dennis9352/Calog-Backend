@@ -133,7 +133,7 @@ router.post('/search/mostUsed', async(req, res) => {
 
 router.get("/mostUsedKey", async(req,res) =>{
   try{
-    const mostUsedKey = await MostUsed.find({}).sort("-times").limit(10);
+    const mostUsedKey = await MostUsed.find({}).sort("-times").limit(4);
     res.json({
       mostUsedKey
     })
