@@ -4,6 +4,9 @@ export const recentSchema = new mongoose.Schema({
     keyword: {
       type: Array,
     },
+    userId: {
+      type: String,
+    },
     
 });
 

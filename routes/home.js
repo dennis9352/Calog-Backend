@@ -177,41 +177,42 @@ export default router;
 //최근 검색어 등록 API
 router.post('/recentKey', isAuth, async(req, res) =>{
   try{
+    const {user} = res.locals;
+    const userId = user._id
     const {keyword} = req.body;
-    const recentKey = await Recent.find()
-    const recentKeyword = recentKey[0]
-    if (recentKey.length === 0){ //리스트가 없을때
-      await Recent.create({keyword:[keyword]})
+    const recentKey = await Recent.findOne({userId:userId})
+    if (!recentKey){ //리스트가 없을때
+      await Recent.create({userId: userId, keyword:[keyword]})
     }else{  //리스트가 있을때
       
-      if(recentKeyword.keyword.length <10){  //배열이 10개 미만일때
-        if(recentKeyword.keyword.includes(keyword)){ //키워드가 이미 리스트에 존재할때
-          recentKeyword.keyword.remove(keyword)
-          recentKeyword.keyword.push(keyword)
-          recentKeyword.save()
+      if(recentKey.keyword.length <10){  //배열이 10개 미만일때
+        if(recentKey.keyword.includes(keyword)){ //키워드가 이미 리스트에 존재할때
+          recentKey.keyword.remove(keyword)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
         }else{ //키워드가 리스트에 존재하지 않을때
-          recentKeyword.keyword.push(keyword)
-          recentKeyword.save()
+          recentKey.keyword.push(keyword)
+          recentKey.save()
         }
         
       }else{  // 배열이 10개 이상일때
-        if(recentKeyword.keyword.includes(keyword)){//키워드가 이미 리스트에 존재할때
-          recentKeyword.keyword.remove(keyword)
-          const lastKey = recentKeyword.keyword[0]
-          recentKeyword.keyword.remove(lastKey)
-          recentKeyword.keyword.push(keyword)
-          recentKeyword.save()
+        if(recentKey.keyword.includes(keyword)){//키워드가 이미 리스트에 존재할때
+          recentKey.keyword.remove(keyword)
+          const lastKey = recentKey.keyword[0]
+          recentKey.keyword.remove(lastKey)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
         }else{ //키워드가 리스트에 존재하지 않을때
-          const lastKey = recentKeyword.keyword[0]
-          recentKeyword.keyword.remove(lastKey)
-          recentKeyword.keyword.push(keyword)
-          recentKeyword.save()
+          const lastKey = recentKey.keyword[0]
+          recentKey.keyword.remove(lastKey)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
         }
         
       }
       
     }
-    console.log(recentKeyword)
+    console.log(recentKey.keyword)
     
     res.sendStatus(200);
     
@@ -227,11 +228,13 @@ router.post('/recentKey', isAuth, async(req, res) =>{
 })
 
 //최근 검색어 조회 API
-router.get('/recentkey', async(req, res) =>{
+router.get('/recentkey', isAuth, async(req, res) =>{
   try{
-    const recentKey = await Recent.find()
-    const recentKeyword = recentKey[0]
-    const keywordList = recentKeyword.keyword.reverse()
+    const {user} = res.locals;
+    const userId = user._id
+
+    const recentKey = await Recent.findOne({userId:userId})
+    const keywordList = recentKey.keyword.reverse()
     res.send(keywordList)
     
   }catch(err){
@@ -244,13 +247,16 @@ router.get('/recentkey', async(req, res) =>{
  
 })
 
-router.delete('/recentkey', async(req, res) =>{
+//최근 검색어 삭제 API
+router.delete('/recentkey', isAuth, async(req, res) =>{
   try{
+    const {user} = res.locals;
+    const userId = user._id
     const {keyword} = req.body;
-    const recentKey = await Recent.find()
-    const recentKeyword = recentKey[0]
-    recentKeyword.keyword.remove(keyword)
-    recentKeyword.save()
+
+    const recentKey = await Recent.findOne({userId:userId})
+    recentKey.keyword.remove(keyword)
+    recentKey.save()
     res.sendStatus(200);
     
   }catch(err){
