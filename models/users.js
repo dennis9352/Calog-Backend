@@ -12,13 +12,12 @@ export const userSchema = new mongoose.Schema({
     email: { type: String,trim: true, unique: true,},
     password: { type: String, trim: true },
     nickname: { type: String, trim: true },
-    profile_image: { type: String, trim: true },
-    gender: { type: String },
-    weight: { type: Number},
-    height: { type: Number},
-    age: { type: Number},
+    profile_image: { type: String, trim: true, default: "없음" },
+    gender: { type: String, default: "미입력" },
+    weight: { type: Number, default: 0 },
+    height: { type: Number, default: 0 },
+    age: { type: Number, default: 0 },
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
-    foodFavorites: {type: mongoose.Schema.Types.ObjectId,},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
 });
 
