@@ -4,7 +4,7 @@ import { checkPermission } from "../middlewares/checkPermission.js";
 import Record from "../models/record.js"
 import User from "../models/users.js"
 import moment from "moment"
-
+import "moment-timezone"
 
 const router = express.Router();
 
@@ -19,7 +19,8 @@ router.get('/dash',checkPermission, async(req, res) => {
     const userId = res.locals.user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
-    console.log(todayDate)
+    moment.tz.setDefault("Asia/Seoul");
+
     const user = await User.findById(userId)
     const userHeight = user.height
     const userWeight = user.weight
@@ -30,15 +31,14 @@ router.get('/dash',checkPermission, async(req, res) => {
         })
         return
     }
-    const record = await Record.find(
+    let record = await Record.find(
         {
             $and : [{ userId : userId }, { date : todayDate }]
         }).populate("foodRecords").exec()
     
     if(!record.length){
-        res.status(400).send({
-            "message" : "기록이 없습니다" 
-        })
+        record = []
+        res.json({ record })
         return
     }
     res.json({record})

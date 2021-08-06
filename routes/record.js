@@ -4,6 +4,7 @@ import FoodRecord from '../models/foodRecord.js'
 import Record from '../models/record.js'
 import { checkPermission } from "../middlewares/checkPermission.js";
 import moment from "moment"
+import "moment-timezone"
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
@@ -12,7 +13,7 @@ router.post('/',checkPermission, async (req,res) => {
     const month = date.split('-')[1]
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
-    
+    moment.tz.setDefault("Asia/Seoul");
     if(!res.locals.user){                     // 비로그인유저
       res.send({"message" : "로그인유저가 아닙니다."})
       return;
