@@ -57,6 +57,7 @@ router.get('/list', isAuth, async(req, res)=>{
     try{
         const {user} = res.locals;
         const userId = user._id;
+        console.log(userId)
     
         const existFood = await Favorite.findOne({userId:userId}) 
         let idList = existFood.foodId // [foodId1, foodId2....] 즐겨찾기에 등록된 foodId 모두 조회
