@@ -272,18 +272,25 @@ router.delete('/recentkey', isAuth, async(req, res) =>{
 //추천 검색어 API
 
 router.get('/recommend', async(req, res) => {
-  
-  const randomList = []
-  for (let i = 0; i < 10; i++){
-    const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
-    const randomKeyword = await Food.findOne().skip(randomKey).limit(1);
-    const randomName = randomKeyword.name
-    randomList.push(randomName)
-    console.log(randomName)
+  try{
+    const randomList = []
+    for (let i = 0; i < 10; i++){
+      const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
+      const randomKeyword = await Food.findOne().skip(randomKey).limit(1);
+      randomList.push(randomKeyword)
+      console.log(randomKeyword)
+    }
+    
+    
+    
+    res.json({randomList})
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "추천 검색어 조회중 에러발생"
+    })
+    return;
   }
   
-  
-  
-  res.send({randomList})
   
 })
