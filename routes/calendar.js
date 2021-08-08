@@ -62,5 +62,10 @@ router.get('/detail/:date', isAuth, async(req, res) => {
     res.status(200).json({ record })
 })
 
+router.get('/exercise', async(req, res) => {
+    const exercise = await Exercise.find({}).limit(10)
+    
+    res.status(200).json({ exercise })
+})
 
 export default router;
