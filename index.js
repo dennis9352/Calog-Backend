@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
 app.get('/', (req, res) => {
-    res.send('그린 다운 블루 업')
+    res.send('그린 업 블루 다운')
 })
 
 app.listen(process.env.PORT || 3000, () => {
