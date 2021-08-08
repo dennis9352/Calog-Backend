@@ -5,7 +5,7 @@ before_install:
   - npm install
 branches:
   only:
-    - master
+    - main
 before_deploy: 
   - rm -rf node_modules 
   - zip -r Calories-Backend * 
@@ -22,7 +22,7 @@ deploy:
     wait-until-deployed: true
     on:
       repo: TeamCalories/Calories-Backend 
-      branch: master
+      branch: main
   - provider: codedeploy 
     access_key_id: $AWS_ACCESS_KEY 
     secret_access_key: $AWS_SECRET_KEY 
@@ -35,7 +35,7 @@ deploy:
     wait-until-deployed: true
     on:
       repo: TeamCalories/Calories-Backend
-      branch: master
+      branch: main
 notifications:
   email:
     recipients:
