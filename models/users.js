@@ -10,7 +10,7 @@ export const userSchema = new mongoose.Schema({
     socialtype:{ type: String },
     socialId:{ type: String },
     email: { type: String,trim: true, unique: true },
-    password: { type: String, trim: true },
+    password: { type: String, trim: true},
     nickname: { type: String, trim: true },
     profile_image: { type: String, trim: true, default: "없음" },
     gender: { type: String, default: "미입력" },
