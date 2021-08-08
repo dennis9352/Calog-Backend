@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
 app.get('/', (req, res) => {
-    res.send('ss')
+    res.send('새로운버전')
 })
 
 app.listen(process.env.PORT || 3000, () => {
