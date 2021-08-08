@@ -9,11 +9,19 @@ const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
     const { date, foodList, contents, url, type} = req.body
-    const year = date.split('-')[0]
-    const month = date.split('-')[1]
+    url = {
+      url : url,
+      type : type
+    }
+
+    contents = {
+      contents : contents,
+      type : type
+    }
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
     moment.tz.setDefault("Asia/Seoul");
+    
     if(!res.locals.user){                     // 비로그인유저
       res.send({"message" : "로그인유저가 아닙니다."})
       return;
@@ -37,14 +45,13 @@ router.post('/',checkPermission, async (req,res) => {
               bmr = user.bmr[0].bmr
             }
           }
+
           const newRecord = new Record({
             userId : userId,
             date : date,
             contents: contents,
             bmr: bmr,
             url: url,
-            year: year,
-            month: month,
           })
 
           for(let i in foodList){               //먹은 음식 하나씩 저장
@@ -125,7 +132,16 @@ router.post('/',checkPermission, async (req,res) => {
 router.put('/:recordId',checkPermission, async(req,res) => {
     const { recordId } = req.params;
     const { foodList, contents, url, type } = req.body
-    const userId = req.user._id
+    url = {
+      url : url,
+      type : type
+    }
+
+    contents = {
+      contents : contents,
+      type : type
+    }
+    const userId = res.locals.user._id
     const record = await Record.findById(recordId)
 
     if (record.userId !== userId){
