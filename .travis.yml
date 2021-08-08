@@ -7,7 +7,8 @@ branches:
   only:
     - main
 before_deploy: 
-  - rm -rf node_modules 
+  - rm -rf node_modules
+  - rm -rf yarn.lock
   - zip -r Calories-Backend * 
   - mkdir -p deploy 
   - mv Calories-Backend.zip deploy/Calories-Backend.zip
