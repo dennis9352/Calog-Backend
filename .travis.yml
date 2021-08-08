@@ -1,16 +1,42 @@
-sudo: required
-
-language: generic
-
-sevices:
-  - docker
-
+language: node_js
+node_js:
+  - "14.17"
 before_install:
-  - echo "start creating image with dockerfile"
-  - docker build -t dennis9352/calories_backend/calories:latest -f Dockerfile.dev .
-
-script:
-  - docker run -e CI=true dennis9352/calories_backend/calories:latest npm run test -- --coverage
-
-after_success:
-  - echo "Test Success"
+  - npm install
+branches:
+  only:
+    - master
+before_deploy: 
+  - rm -rf node_modules 
+  - zip -r Calories-Backend * 
+  - mkdir -p deploy 
+  - mv Calories-Backend.zip deploy/Calories-Backend.zip
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY 
+    secret_access_key: $AWS_SECRET_KEY 
+    bucket: calories-cd 
+    region: ap-northeast-2
+    skip_cleanup: true 
+    local_dir: deploy 
+    wait-until-deployed: true
+    on:
+      repo: TeamCalories/Calories-Backend 
+      branch: master
+  - provider: codedeploy 
+    access_key_id: $AWS_ACCESS_KEY 
+    secret_access_key: $AWS_SECRET_KEY 
+    bucket: calories-cd 
+    key: Calories-Backend.zip 
+    bundle_type: zip 
+    application: calories-backend-cicd-codedeploy-service
+    deployment_group: cicd-deploy-group 
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      repo: TeamCalories/Calories-Backend
+      branch: master
+notifications:
+  email:
+    recipients:
+      - dennis9352@gmail.com

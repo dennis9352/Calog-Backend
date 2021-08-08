@@ -4,6 +4,8 @@ import Favorite from '../models/favorite.js'
 import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
 import {checkPermission} from '../middlewares/checkPermission.js'
+import Recent from '../models/recent.js'
+import {isAuth} from '../middlewares/auth.js'
 const router = express.Router();
 
 //검색 API
@@ -170,3 +172,125 @@ router.get("/search/detail/:foodId", async (req, res) => {
 })
 
 export default router;
+
+
+//최근 검색어 등록 API
+router.post('/recentKey', isAuth, async(req, res) =>{
+  try{
+    const {user} = res.locals;
+    const userId = user._id
+    const {keyword} = req.body;
+    const recentKey = await Recent.findOne({userId:userId})
+    if (!recentKey){ //리스트가 없을때
+      await Recent.create({userId: userId, keyword:[keyword]})
+    }else{  //리스트가 있을때
+      
+      if(recentKey.keyword.length <10){  //배열이 10개 미만일때
+        if(recentKey.keyword.includes(keyword)){ //키워드가 이미 리스트에 존재할때
+          recentKey.keyword.remove(keyword)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
+        }else{ //키워드가 리스트에 존재하지 않을때
+          recentKey.keyword.push(keyword)
+          recentKey.save()
+        }
+        
+      }else{  // 배열이 10개 이상일때
+        if(recentKey.keyword.includes(keyword)){//키워드가 이미 리스트에 존재할때
+          recentKey.keyword.remove(keyword)
+          const lastKey = recentKey.keyword[0]
+          recentKey.keyword.remove(lastKey)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
+        }else{ //키워드가 리스트에 존재하지 않을때
+          const lastKey = recentKey.keyword[0]
+          recentKey.keyword.remove(lastKey)
+          recentKey.keyword.push(keyword)
+          recentKey.save()
+        }
+        
+      }
+      
+    }
+    console.log(recentKey.keyword)
+    
+    res.sendStatus(200);
+    
+   
+
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "최근 검색어 등록중 에러발생"
+    })
+    return;
+  }
+})
+
+//최근 검색어 조회 API
+router.get('/recentkey', isAuth, async(req, res) =>{
+  try{
+    const {user} = res.locals;
+    const userId = user._id
+
+    const recentKey = await Recent.findOne({userId:userId})
+    const keywordList = recentKey.keyword.reverse()
+    res.send(keywordList)
+    
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "최근 검색어 등록중 에러발생"
+    })
+    return;
+  }
+ 
+})
+
+//최근 검색어 삭제 API
+router.delete('/recentkey', isAuth, async(req, res) =>{
+  try{
+    const {user} = res.locals;
+    const userId = user._id
+    const {keyword} = req.body;
+
+    const recentKey = await Recent.findOne({userId:userId})
+    recentKey.keyword.remove(keyword)
+    recentKey.save()
+    res.sendStatus(200);
+    
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "최근 검색어 삭제중 에러발생"
+    })
+    return;
+  }
+ 
+})
+
+//추천 검색어 API
+
+router.get('/recommend', async(req, res) => {
+  try{
+    const randomList = []
+    for (let i = 0; i < 10; i++){
+      const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
+      const randomKeyword = await Food.findOne().skip(randomKey).limit(1);
+      randomList.push(randomKeyword)
+      console.log(randomKeyword)
+    }
+    
+    
+    
+    res.json({randomList})
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "추천 검색어 조회중 에러발생"
+    })
+    return;
+  }
+  
+  
+})
