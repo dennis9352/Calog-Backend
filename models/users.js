@@ -9,7 +9,7 @@ const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >
 export const userSchema = new mongoose.Schema({
     socialtype:{ type: String },
     socialId:{ type: String },
-    email: { type: String,trim: true, unique: true,},
+    email: { type: String,trim: true, unique: true},
     password: { type: String, trim: true },
     nickname: { type: String, trim: true },
     profile_image: { type: String, trim: true, default: "없음" },
