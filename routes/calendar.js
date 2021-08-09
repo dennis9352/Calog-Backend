@@ -18,10 +18,6 @@ router.get('/exercise', async(req, res) => {
 router.get('/dash',checkPermission, async(req, res) => {
     const checkUser = res.locals.user
 
-    if(!checkUser){                     // 비로그인유저
-        res.status(400).send({"message" : "로그인유저가 아닙니다."})
-        return;
-    }
     try{
     const userId = res.locals.user._id
     const newdate = moment()
