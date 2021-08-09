@@ -234,8 +234,14 @@ router.get('/recentkey', isAuth, async(req, res) =>{
     const userId = user._id
 
     const recentKey = await Recent.findOne({userId:userId})
-    const keywordList = recentKey.keyword.reverse()
-    res.send(keywordList)
+    if(!recentKey){
+      res.sendStatus(204)
+      return;
+    }else{
+      const keywordList = recentKey.keyword.reverse()
+      res.send(keywordList)
+    }
+    
     
   }catch(err){
     console.log(err) 
@@ -253,7 +259,7 @@ router.delete('/recentkey', isAuth, async(req, res) =>{
     const {user} = res.locals;
     const userId = user._id
     const {keyword} = req.body;
-
+    
     const recentKey = await Recent.findOne({userId:userId})
     recentKey.keyword.remove(keyword)
     recentKey.save()
