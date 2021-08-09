@@ -2,12 +2,13 @@ language: node_js
 node_js:
   - "14.17"
 before_install:
-  - npm install
+  - npm install -g yarn
 branches:
   only:
-    - master
+    - main
 before_deploy: 
-  - rm -rf node_modules 
+  - rm -rf node_modules
+  - rm -rf yarn.lock
   - zip -r Calories-Backend * 
   - mkdir -p deploy 
   - mv Calories-Backend.zip deploy/Calories-Backend.zip
@@ -22,7 +23,7 @@ deploy:
     wait-until-deployed: true
     on:
       repo: TeamCalories/Calories-Backend 
-      branch: master
+      branch: main
   - provider: codedeploy 
     access_key_id: $AWS_ACCESS_KEY 
     secret_access_key: $AWS_SECRET_KEY 
@@ -35,7 +36,7 @@ deploy:
     wait-until-deployed: true
     on:
       repo: TeamCalories/Calories-Backend
-      branch: master
+      branch: main
 notifications:
   email:
     recipients:

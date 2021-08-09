@@ -3,10 +3,17 @@ import { isAuth } from "../middlewares/auth.js";
 import { checkPermission } from "../middlewares/checkPermission.js";
 import Record from "../models/record.js"
 import User from "../models/users.js"
+import Exercise from "../models/exercise.js";
 import moment from "moment"
 import "moment-timezone"
 
 const router = express.Router();
+
+router.get('/exercise', async(req, res) => {
+    const exercise = await Exercise.find({}).limit(5)
+    
+    res.status(200).json({ exercise })
+})
 
 router.get('/dash',checkPermission, async(req, res) => {
     const checkUser = res.locals.user
@@ -15,7 +22,7 @@ router.get('/dash',checkPermission, async(req, res) => {
         res.status(400).send({"message" : "로그인유저가 아닙니다."})
         return;
     }
-    
+    try{
     const userId = res.locals.user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
@@ -32,6 +39,12 @@ router.get('/dash',checkPermission, async(req, res) => {
         return
     }
     res.json({record})
+    }catch(err){
+    console.log(err)
+    res.status(400)({
+        errorMessage: "대쉬보드 불러오기 실패"
+    })
+}
 });
 
 router.get('/:date', isAuth, async(req, res) => {
@@ -61,6 +74,7 @@ router.get('/detail/:date', isAuth, async(req, res) => {
  
     res.status(200).json({ record })
 })
+
 
 
 export default router;

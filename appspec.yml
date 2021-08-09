@@ -3,6 +3,7 @@ os: linux
 files:
   - source:  /
     destination: /home/ubuntu/deploy/Calories-Backend/
+    overwrite: yes
 hooks:
   AfterInstall: 
     - location: execute-deploy.sh
