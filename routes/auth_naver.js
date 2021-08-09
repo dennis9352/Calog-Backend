@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
+import axios from "axios"
 import passport from '../passport/NaverStrategy.js'
 dotenv.config()
 
@@ -12,15 +13,16 @@ const jwtExpiresInDays = '2d';
 router.get('/naver', passport.authenticate('naver'));
 //콜백 url
 router.get('/oauth', passport.authenticate('naver', {
+  session: false,
   failureRedirect: '/',
-}), (req, res) => {
+}),  (req, res) => {
 
   const token = createJwtToken(req.user._id);
   console.log(token)
 
-  res.cookie("x_auth",token)
-    .status(200)
-    .redirect("http://localhost:3000")
+
+ 
+  res.redirect("http://localhost:3000/naver?token="+token)
 });
 function createJwtToken(id) {
   return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });

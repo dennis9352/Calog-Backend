@@ -19,7 +19,7 @@ passport.use(
       {
         clientID: process.env.NAVER_CLIENT_ID,
         clientSecret: process.env.NAVER_SECRET,
-        callbackURL: "http://2k1.shop/api/auth_naver/oauth", // 애플리케이션을 등록할 때 입력했던 callbackURL 을 입력해준다.
+        callbackURL: "https://2k1.shop/api/auth_naver/oauth", // 애플리케이션을 등록할 때 입력했던 callbackURL 을 입력해준다.
       },
        async (accessToken, refreshToken, profile , cb) => {
    
