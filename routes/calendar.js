@@ -22,7 +22,7 @@ router.get('/dash',checkPermission, async(req, res) => {
         res.status(400).send({"message" : "로그인유저가 아닙니다."})
         return;
     }
-    
+    try{
     const userId = res.locals.user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
@@ -39,6 +39,12 @@ router.get('/dash',checkPermission, async(req, res) => {
         return
     }
     res.json({record})
+    }catch(err){
+    console.log(err)
+    res.status(400)({
+        errorMessage: "대쉬보드 불러오기 실패"
+    })
+}
 });
 
 router.get('/:date', isAuth, async(req, res) => {
