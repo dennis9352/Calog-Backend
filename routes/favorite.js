@@ -57,13 +57,12 @@ router.get('/list', isAuth, async(req, res)=>{
     try{
         const {user} = res.locals;
         const userId = user._id;
-        console.log(userId)
-    
-        const existFood = await Favorite.findOne({userId:userId}) 
-        let idList = existFood.foodId // [foodId1, foodId2....] 즐겨찾기에 등록된 foodId 모두 조회
-        if (!idList){
+        const existFood = await Favorite.findOne({userId:userId})
+        
+        if (!existFood){
             res.sendStatus(204) //즐겨찾기에 등록된 음식 없음
         }else{
+            let idList = existFood.foodId // [foodId1, foodId2....] 즐겨찾기에 등록된 foodId 모두 조회
             let foodList = []
             for(let i = idList.length -1; i >= 0; i--){
                 const food = await Food.findOne({_id: idList[i]})
