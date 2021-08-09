@@ -134,72 +134,41 @@ router.post('/',checkPermission, async (req,res) => {
     }
 });
 
-router.put('/:recordId',checkPermission, async(req,res) => {
-    const { recordId } = req.params;
-    const { foodList, contents, url, type } = req.body
-    url = {
-      url : url,
-      type : type
-    }
-
-    contents = {
-      contents : contents,
-      type : type
-    }
-    const userId = res.locals.user._id
-    const record = await Record.findById(recordId)
-
-    if (record.userId !== userId){
-      res.status(400).send({
-        errorMessage: "유저정보가 일치하지 않습니다."
-      })
-    }
-
-    for(let i in record.foodRecords){                 //foodRecord에 있는 기록 삭제하기
-        await FoodRecord.findByIdAndDelete(record.foodRecords[i])
-    }
-    
-    record.contents = contents
-    record.url = url
-    record.foodRecords = []                         //user record에 연결되어있는 foodRecords 비우고 다시 넣기
-    
-    for(let i in foodList){
-      let foodId = foodList[i].foodId
-      let name = foodList[i].name
-      let amount = foodList[i].amount
-      let kcal = foodList[i].kcal
-      let resultKcal = (kcal * amount)
-
-      let foodRecord = await FoodRecord.create({
-          foodId : foodId,
-          name : name,
-          amount : amount,
-          resultKcal : resultKcal,
-          type: type,
-      })
-        record.foodRecords.push(foodRecord._id);
-        record.totalCalories += resultKcal
-    }
-
-    await record.save()   
-    res.sendStatus(200)
-})
-
 router.delete('/:recordId',isAuth, async(req,res) => {
-    const { recordId } = req.params;
+    const { recordId } = req.params
     const { date, type } = req.params
     const userId = res.locals.user._id
+    const record = Record.findById(recordId).populate('foodRecords').exec()
+    try{
+    for(let i in record.foodRecords){
+      if(record.foodRecords[i].type === type){
+        record.foodRecords.splice(i,i)
+      }
+    }
+    for(let i in record.url){
+      if(record.url[i].type === type){
+        record.url.splice(i,i)
+      }
+    }
+    for(let i in record.url){
+      if(record.contents[i].type === type){
+        record.contents.splice(i,i)
+      }
+    }
     await FoodRecord.deleteMany({ 
       userId: userId, 
       userdate: date, 
       type : type
     })
-    const record = Record.findById(recordId)
-    record.url
-    record.contents
-    
 
     res.sendStatus(200)
+
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage: "기록 삭제에 실패했습니다"
+    })
+  }
 })
 
 
