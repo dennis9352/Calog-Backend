@@ -7,7 +7,6 @@ export const recentSchema = new mongoose.Schema({
     userId: {
       type: String,
     },
-    
 });
 
 export default mongoose.model('Recent', recentSchema)

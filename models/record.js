@@ -21,12 +21,6 @@ export const recordSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    year: {
-        type: String,
-    },
-    month:{
-        type: String,
-    },
     url: {
         type: Array,
         default: [],

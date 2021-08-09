@@ -2,7 +2,7 @@ import express from "express";
 import Notice from '../models/notice.js'
 import {isAuth} from '../middlewares/auth.js'
 import dotenv from 'dotenv'
-import { checkPermission } from "../middlewares/checkPermission.js";
+
 dotenv.config()
 const router = express.Router();
 
@@ -23,6 +23,7 @@ router.post('/', isAuth, async(req, res) => {               // 공지사항 쓰�
         })
         return
     }
+    try{
     await Notice.create({
         title: title,
         contents: contents,
@@ -30,17 +31,40 @@ router.post('/', isAuth, async(req, res) => {               // 공지사항 쓰�
     })
 
     res.sendStatus(200)
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "공지사항 작성에 실패했습니다"
+    })
+    }
 })
 
 router.get('/', async(req, res) => {                    // 공지사항 목록
+    try{
     const notice = await Notice.find({})
     res.json({notice})
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "공지사항 불러오기에 실패했습니다"
+    })
+    }
 })
 
 router.get('/:noticeId', async(req, res) => {              // 공지사항 디테일
     const { noticeId } = req.params
+    try{
     const notice = await Notice.findById(noticeId)
     res.json({notice})
+
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "공지사항 상세정보 불러오기에 실패했습니다"
+    })
+    }
 })
 
 router.put('/:noticeId',isAuth, async(req, res) => {           // 공지사항 업데이트
@@ -61,6 +85,7 @@ router.put('/:noticeId',isAuth, async(req, res) => {           // 공지사항 �
         })
         return
     }
+    try{
     await Notice.findByIdAndUpdate(noticeId, {
         $set: {
           title: title,
@@ -68,6 +93,13 @@ router.put('/:noticeId',isAuth, async(req, res) => {           // 공지사항 �
         },
       }).exec();
     res.sendStatus(200)
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "공지사항 수정에 실패했습니다"
+    })
+    }
 })
 
 router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭제
@@ -90,8 +122,16 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
         })
         return
     }
+    try{
     await Notice.findByIdAndDelete(noticeId)
     res.sendStatus(200)
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "공지사항 삭제에 실패했습니다"
+    })
+    }
 })
 
 
