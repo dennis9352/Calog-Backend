@@ -8,7 +8,7 @@ import "moment-timezone"
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
-    const { date, foodList, contents, url, type} = req.body
+    let { date, foodList, contents, url, type} = req.body
     url = {
       url : url,
       type : type
@@ -31,7 +31,7 @@ router.post('/',checkPermission, async (req,res) => {
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
     let bmr = user.bmr[user.bmr.length-1].bmr
-    console.log(user,record,bmr)
+
     try{
       if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성) 
         if(date !== todayDate){               // 기록하려는 날짜가 오늘 날짜가 아니면
