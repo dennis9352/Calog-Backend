@@ -20,6 +20,8 @@ router.post('/',checkPermission, async (req,res) => {
     }
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
+    const year = todayDate.split("-")[0]
+    const month = todayDate.split("-")[1]
     moment.tz.setDefault("Asia/Seoul");
     
     if(!res.locals.user){                     // 비로그인유저
@@ -49,6 +51,8 @@ router.post('/',checkPermission, async (req,res) => {
           const newRecord = new Record({
             userId : userId,
             date : date,
+            year : year,
+            month : month,
             contents: contents,
             bmr: bmr,
             url: url,
