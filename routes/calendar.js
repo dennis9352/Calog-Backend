@@ -21,16 +21,6 @@ router.get('/dash',checkPermission, async(req, res) => {
     const todayDate = newdate.format('YYYY-MM-DD')
     moment.tz.setDefault("Asia/Seoul");
 
-    const user = await User.findById(userId)
-    const userHeight = user.height
-    const userWeight = user.weight
-    
-    if(!userHeight || !userWeight){
-        res.status(400).send({
-            "message" : "바디스펙 정보가 없습니다"
-        })
-        return
-    }
     let record = await Record.find(
         {
             $and : [{ userId : userId }, { date : todayDate }]
