@@ -3,10 +3,17 @@ import { isAuth } from "../middlewares/auth.js";
 import { checkPermission } from "../middlewares/checkPermission.js";
 import Record from "../models/record.js"
 import User from "../models/users.js"
+import Exercise from "../models/exercise.js";
 import moment from "moment"
 import "moment-timezone"
 
 const router = express.Router();
+
+router.get('/exercise', async(req, res) => {
+    const exercise = await Exercise.find({}).limit(5)
+    
+    res.status(200).json({ exercise })
+})
 
 router.get('/dash',checkPermission, async(req, res) => {
     const checkUser = res.locals.user
@@ -62,10 +69,6 @@ router.get('/detail/:date', isAuth, async(req, res) => {
     res.status(200).json({ record })
 })
 
-router.get('/exercise', async(req, res) => {
-    const exercise = await Exercise.find({}).limit(10)
-    
-    res.status(200).json({ exercise })
-})
+
 
 export default router;
