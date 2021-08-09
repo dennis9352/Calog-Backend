@@ -16,6 +16,12 @@ export const foodRecordSchema = new mongoose.Schema({
     type: {
         type: String,
     },
+    date: {
+        type: String,
+    },
+    userId: {
+        type: String,
+    }
 });
 foodRecordSchema.virtual("foodRecordId").get(function () {
     return this._id.toHexString();

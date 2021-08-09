@@ -5,6 +5,7 @@ import Record from '../models/record.js'
 import { checkPermission } from "../middlewares/checkPermission.js";
 import moment from "moment"
 import "moment-timezone"
+import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
@@ -31,7 +32,7 @@ router.post('/',checkPermission, async (req,res) => {
     const user = await User.findById(userId).exec()
     const record = await Record.findOne({userId: userId, date: date}).exec()
     let bmr = user.bmr[user.bmr.length-1].bmr
-    console.log(user,record,bmr)
+    
     try{
       if(!record) {   // 해당 날짜 하루 칼로리 기록이 없을때 (생성) 
         if(date !== todayDate){               // 기록하려는 날짜가 오늘 날짜가 아니면
@@ -67,6 +68,8 @@ router.post('/',checkPermission, async (req,res) => {
                   amount : amount,
                   resultKcal : resultKcal,
                   type: type,
+                  date: date,
+                  userId: userId
               })
                 newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
                 newRecord.totalCalories =+ resultKcal
@@ -100,6 +103,8 @@ router.post('/',checkPermission, async (req,res) => {
               amount : amount,
               resultKcal : resultKcal,
               type: type,
+              date: date,
+              userId: userId
           })
             record.foodRecords.push(foodRecord._id);
             record.totalCalories += resultKcal
@@ -180,12 +185,22 @@ router.put('/:recordId',checkPermission, async(req,res) => {
     res.sendStatus(200)
 })
 
-// router.delete('/:recordId', async(req,res) => {
-//     const { recordId } = req.params;
+router.delete('/:recordId',isAuth, async(req,res) => {
+    const { recordId } = req.params;
+    const { date, type } = req.params
+    const userId = res.locals.user._id
+    await FoodRecord.deleteMany({ 
+      userId: userId, 
+      userdate: date, 
+      type : type
+    })
+    const record = Record.findById(recordId)
+    record.url
+    record.contents
     
-//     Record.findByIdandDelete(recordId);
-//     res.sendStatus(200)
-// })
+
+    res.sendStatus(200)
+})
 
 
 export default router;

@@ -19,6 +19,9 @@ export const userSchema = new mongoose.Schema({
     age: { type: Number, default: 0 },
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
+    heightBlind: {type: Boolean, default: false},
+    weightBlind: {type: Boolean, default: false},
+    bmrBlind: {type: Boolean, default: false},
 });
 
 export default mongoose.model('User', userSchema)

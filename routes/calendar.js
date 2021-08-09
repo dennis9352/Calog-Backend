@@ -16,18 +16,24 @@ router.get('/exercise', async(req, res) => {
 })
 
 router.get('/dash',checkPermission, async(req, res) => {
-    const checkUser = res.locals.user
+    const user = res.locals.user
 
-    if(!checkUser){                     // 비로그인유저
+    if(!user){                     // 비로그인유저
         res.status(400).send({"message" : "로그인유저가 아닙니다."})
         return;
     }
     
-    const userId = res.locals.user._id
+    const userId = user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
     moment.tz.setDefault("Asia/Seoul");
 
+    const userInfo = await User.findById(userId)
+    const blind = {
+        heightBlind : userInfo.heightBlind,
+        weightBlind : userInfo.weightBlind,
+        bmrBlind : userInfo.bmrBlind,
+    }
     let record = await Record.find(
         {
             $and : [{ userId : userId }, { date : todayDate }]
@@ -35,10 +41,29 @@ router.get('/dash',checkPermission, async(req, res) => {
     
     if(!record.length){
         record = []
-        res.json({ record })
+        res.json({ record, blind })
         return
     }
-    res.json({record})
+    res.json({record, blind})
+});
+
+router.put('/blind', checkPermission, async(req, res) => {
+    const { weightBlind, heightBlind, bmrBlind } = req.body
+    const user = res.locals.user
+    if(!user){                     // 비로그인유저
+        res.status(400).send({"message" : "로그인유저가 아닙니다."})
+        return;
+    }
+
+    const userId = user._id
+    await User.findByIdAndUpdate(userId, {
+        $set: {
+          weightBlind: weightBlind,
+          heightBlind: heightBlind,
+          bmrBlind: bmrBlind,
+        },
+      }).exec();
+
 });
 
 router.get('/:date', isAuth, async(req, res) => {
