@@ -26,7 +26,12 @@ router.get('/exercise', async(req, res) => {
 
 router.get('/dash',checkPermission, async(req, res) => {
     const user = res.locals.user
-
+    
+    if(!user){
+        return res.status(200).send({
+            message: "로그인 안했는데 예외처리 어떻게 할지 몰라서 일단 일케해둠"
+        })
+    }
     const userId = res.locals.user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
