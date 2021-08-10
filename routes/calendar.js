@@ -64,10 +64,7 @@ router.get('/dash',checkPermission, async(req, res) => {
 router.put('/blind', checkPermission, async(req, res) => {
     const { weightBlind, heightBlind, bmrBlind } = req.body
     const user = res.locals.user
-    if(!user){                     // 비로그인유저
-        res.status(400).send({"message" : "로그인유저가 아닙니다."})
-        return;
-    }
+
     try{
     const userId = user._id
     await User.findByIdAndUpdate(userId, {
@@ -77,7 +74,7 @@ router.put('/blind', checkPermission, async(req, res) => {
           bmrBlind: bmrBlind,
         },
       }).exec();
-
+    res.sendStatus(200)
     }catch(err){
         console.log(err)
         res.status(400).send({
