@@ -53,10 +53,14 @@ router.post('/',checkPermission, async (req,res) => {
             date : date,
             year : year,
             month : month,
-            contents: contents,
             bmr: bmr,
-            url: url,
           })
+          if (url.url !== ""){              // 이미지가 빈값이 아니라면 추가
+            newRecord.url = url
+          }
+          if (contents.contents !== ""){    // 메모가 빈값이 아니라면 추가
+            newRecord.contents = contents
+          }
 
           for(let i in foodList){               //먹은 음식 하나씩 저장
               let foodId = foodList[i].foodId
@@ -93,6 +97,7 @@ router.post('/',checkPermission, async (req,res) => {
         if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
           record.bmr = bmr;
         }
+        
         for(let i in foodList){
           let foodId = foodList[i].foodId
           let name = foodList[i].name
@@ -112,16 +117,12 @@ router.post('/',checkPermission, async (req,res) => {
             record.foodRecords.push(foodRecord._id);
             record.totalCalories += resultKcal
         }
-        if(url){             // 수정해야할 이미지 array가 있으면 합치기
-        const oldUrl = record.url
-        const newUrl = oldUrl.concat(url)
-        record.url = newUrl
+        if(url.url !== ""){             // 이미지 array push
+          record.url.push(url)
         }
         
-        if(contents){    // 수정해야할 메모 array가 있으면 합치기
-          const oldContents = record.contents 
-          const newContents = oldContents.concat(contents)
-          record.contents = newContents
+        if(contents.contents !== ""){    // 메모 push
+          record.contents.push(contents)
         }
 
 
