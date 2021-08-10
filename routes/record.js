@@ -98,8 +98,8 @@ router.post('/',checkPermission, async (req,res) => {
           let name = foodList[i].name
           let amount = foodList[i].amount
           let kcal = foodList[i].kcal
-          let resultKcal = (kcal * amount)
-
+          let resultKcal = Math.round(kcal * amount)
+          
           let foodRecord = await FoodRecord.create({
               foodId : foodId,
               name : name,
@@ -112,13 +112,13 @@ router.post('/',checkPermission, async (req,res) => {
             record.foodRecords.push(foodRecord._id);
             record.totalCalories += resultKcal
         }
-        if(url.length){             // 수정해야할 이미지 array가 있으면 합치기
+        if(url){             // 수정해야할 이미지 array가 있으면 합치기
         const oldUrl = record.url
         const newUrl = oldUrl.concat(url)
         record.url = newUrl
         }
         
-        if(contents.length){    // 수정해야할 메모 array가 있으면 합치기
+        if(contents){    // 수정해야할 메모 array가 있으면 합치기
           const oldContents = record.contents 
           const newContents = oldContents.concat(contents)
           record.contents = newContents
@@ -139,31 +139,32 @@ router.post('/',checkPermission, async (req,res) => {
 
 router.delete('/:recordId',isAuth, async(req,res) => {
     const { recordId } = req.params
-    const { date, type } = req.params
+    const { date, type } = req.body
     const userId = res.locals.user._id
-    const record = Record.findById(recordId).populate('foodRecords').exec()
+    const record = await Record.findById(recordId).populate('foodRecords').exec()
+    
     try{
-    for(let i in record.foodRecords){
+    for(let i=record.foodRecords.length -1; i >= 0; i--){
       if(record.foodRecords[i].type === type){
-        record.foodRecords.splice(i,i)
+        record.foodRecords.splice(i,1)
       }
     }
-    for(let i in record.url){
+    for(let i=record.url.length -1; i >= 0; i--){
       if(record.url[i].type === type){
-        record.url.splice(i,i)
+        record.url.splice(i,1)
       }
     }
-    for(let i in record.url){
+    for(let i=record.contents.length -1; i >= 0; i--){
       if(record.contents[i].type === type){
-        record.contents.splice(i,i)
+        record.contents.splice(i,1)
       }
     }
     await FoodRecord.deleteMany({ 
       userId: userId, 
-      userdate: date, 
+      date: date, 
       type : type
     })
-
+    await record.save()
     res.sendStatus(200)
 
   }catch(err){

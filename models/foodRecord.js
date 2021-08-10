@@ -23,11 +23,5 @@ export const foodRecordSchema = new mongoose.Schema({
         type: String,
     }
 });
-foodRecordSchema.virtual("foodRecordId").get(function () {
-    return this._id.toHexString();
-  });
-foodRecordSchema.set("toJSON", {
-    virtuals: true,
-  });
 
 export default mongoose.model('FoodRecord', foodRecordSchema)
