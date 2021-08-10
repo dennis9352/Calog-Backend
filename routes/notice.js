@@ -2,6 +2,7 @@ import express from "express";
 import Notice from '../models/notice.js'
 import {isAuth} from '../middlewares/auth.js'
 import dotenv from 'dotenv'
+import Feedback from "../models/feedback.js";
 
 dotenv.config()
 const router = express.Router();
@@ -134,6 +135,26 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
     }
 })
 
+router.post('/feedback',isAuth, async(req,res) => {
+    const userId = res.locals.user._id
+    const nickname = res.locals.user.nickname
+    const { title, contents, date } = req.body
+    try{
+    await Feedback.create({
+        userId : userId,
+        nickname : nickname,
+        title : title,
+        contents : contents,
+        date : date,
+    })
+    res.sendStatus(200)
 
+    }catch(err){
+        console.log(err)
+        res.status(400).send({
+            errorMessage: "피드백 작성에 실패했습니다"
+        })
+    }
+});
 
 export default router;
