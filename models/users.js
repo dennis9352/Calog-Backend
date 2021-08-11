@@ -22,6 +22,7 @@ export const userSchema = new mongoose.Schema({
     heightBlind: {type: Boolean, default: false},
     weightBlind: {type: Boolean, default: false},
     bmrBlind: {type: Boolean, default: false},
+    deleteList: {type: Array, default: []}
 });
 
 export default mongoose.model('User', userSchema)

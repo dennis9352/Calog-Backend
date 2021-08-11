@@ -9,7 +9,7 @@ import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
-    let { date, foodList, contents, url, type} = req.body
+    let { date, foodList, contents, url, type } = req.body
     url = {
       url : url,
       type : type
@@ -91,7 +91,7 @@ router.post('/',checkPermission, async (req,res) => {
                 console.log(err);
               }
             });
-            res.sendStatus(200)
+            
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
         if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
@@ -125,11 +125,13 @@ router.post('/',checkPermission, async (req,res) => {
           record.contents.push(contents)
         }
 
-
         await record.save()
 
-        res.sendStatus(200)
     }
+    user.deleteList = []
+    user.save()
+    res.sendStatus(200)
+
     }catch(err){
         console.log(err)
         res.status(400).send({
@@ -143,10 +145,12 @@ router.delete('/:recordId',isAuth, async(req,res) => {
     const { date, type } = req.body
     const userId = res.locals.user._id
     const record = await Record.findById(recordId).populate('foodRecords').exec()
-    
+    const user = await User.findById(userId)
+    const deleteList = []
     try{
     for(let i=record.foodRecords.length -1; i >= 0; i--){
       if(record.foodRecords[i].type === type){
+        deleteList.push(record.foodRecords)
         record.foodRecords.splice(i,1)
       }
     }
@@ -164,8 +168,10 @@ router.delete('/:recordId',isAuth, async(req,res) => {
       userId: userId, 
       date: date, 
       type : type
-    })
+    }).exec()
     await record.save()
+    user.deleteList.push(deleteList)
+    await user.save()
     res.sendStatus(200)
 
   }catch(err){

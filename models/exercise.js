@@ -6,6 +6,9 @@ export const exerciseSchema = new mongoose.Schema({
     },
     name: {
         type: String, 
+    },
+    url: {
+        type: String,
     }
 });
 

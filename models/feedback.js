@@ -16,8 +16,6 @@ export const feedbackSchema = new mongoose.Schema({
     date: {
         type: String,
     },
-    
-
 });
 
 export default mongoose.model('Feedback', feedbackSchema)
