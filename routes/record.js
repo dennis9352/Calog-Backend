@@ -72,6 +72,7 @@ router.post('/',checkPermission, async (req,res) => {
               let foodRecord = await FoodRecord.create({
                   foodId : foodId,
                   name : name,
+                  kcal : kcal,
                   amount : amount,
                   resultKcal : resultKcal,
                   type: type,
@@ -86,12 +87,13 @@ router.post('/',checkPermission, async (req,res) => {
             await newRecord.save(async function () {
               try {
                 user.records.push(newRecord._id);   //해당 유저에 기록 저장
+                user.deleteList = []
                 await user.save();
               } catch (err) {
                 console.log(err);
               }
             });
-            
+            res.sendStatus(200)
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
 
         if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
@@ -108,6 +110,7 @@ router.post('/',checkPermission, async (req,res) => {
           let foodRecord = await FoodRecord.create({
               foodId : foodId,
               name : name,
+              kcal: kcal,
               amount : amount,
               resultKcal : resultKcal,
               type: type,
@@ -126,12 +129,10 @@ router.post('/',checkPermission, async (req,res) => {
         }
 
         await record.save()
-
-    }
-    user.deleteList = []
-    user.save()
-    res.sendStatus(200)
-
+        user.deleteList = []
+        user.save()
+        res.sendStatus(200)
+    } 
     }catch(err){
         console.log(err)
         res.status(400).send({
@@ -148,30 +149,43 @@ router.delete('/:recordId',isAuth, async(req,res) => {
     const user = await User.findById(userId)
     const deleteList = []
     try{
+      // 해당 type 칼로리 기록 삭제와 동시에 삭제 리스트 저장
     for(let i=record.foodRecords.length -1; i >= 0; i--){
       if(record.foodRecords[i].type === type){
-        deleteList.push(record.foodRecords)
+        deleteList.push(record.foodRecords[i])
         record.foodRecords.splice(i,1)
       }
-    }
+    } // 해당 type 이미지 삭제
     for(let i=record.url.length -1; i >= 0; i--){
       if(record.url[i].type === type){
         record.url.splice(i,1)
       }
-    }
+    } // 해당 type 메모 삭제
     for(let i=record.contents.length -1; i >= 0; i--){
       if(record.contents[i].type === type){
         record.contents.splice(i,1)
       }
     }
+
     await FoodRecord.deleteMany({ 
       userId: userId, 
       date: date, 
       type : type
     }).exec()
     await record.save()
+    //만약 기록에 칼로리 기록이 없다면 삭제
+    if (!record.Foodrecords){
+      await Record.findByIdAndDelete(recordId)
+      for(let i in user.records){
+        if(user.records[i] == recordId){
+          user.records.splice(i,1)
+        }
+      }
+    }
+    // 최근 삭제리스트 유저에 저장
     user.deleteList.push(deleteList)
     await user.save()
+
     res.sendStatus(200)
 
   }catch(err){

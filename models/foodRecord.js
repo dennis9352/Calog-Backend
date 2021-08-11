@@ -7,8 +7,11 @@ export const foodRecordSchema = new mongoose.Schema({
     name: {
         type: String,
     },
+    kcal: {
+        type: Number,
+    },
     amount: { 
-        type: String,
+        type: Number,
     },
     resultKcal: {
         type: Number,
