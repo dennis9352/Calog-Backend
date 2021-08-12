@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import "./models/index.js";
 import passport from 'passport';
 import session from 'express-session' 
+import "./models/indexAtlas.js";
 
 
 
