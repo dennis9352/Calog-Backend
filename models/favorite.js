@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const favoriteSchema = new mongoose.Schema({
     userId: {
@@ -9,4 +10,4 @@ export const favoriteSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model('Favorite', favoriteSchema)
+export default conn.model('Favorite', favoriteSchema)

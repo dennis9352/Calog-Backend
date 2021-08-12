@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 const date = new Date()
 const ryear = date.getFullYear();
@@ -25,4 +26,4 @@ export const userSchema = new mongoose.Schema({
     deleteList: {type: Array, default: []}
 });
 
-export default mongoose.model('User', userSchema)
+export default conn.model('User', userSchema)

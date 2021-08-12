@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn2} from './indexAtlas.js'
 
 export const foodSchema = new mongoose.Schema({
     name: {
@@ -19,10 +20,10 @@ export const foodSchema = new mongoose.Schema({
 });
 
 foodSchema.virtual("foodId").get(function () {
-    return this._id.toHexString();
-  });
+  return this._id.toHexString();
+});
 foodSchema.set("toJSON", {
-    virtuals: true,
-  });
+  virtuals: true,
+});
 
-export default mongoose.model('Calorie', foodSchema)
+export default conn2.model('Calorie', foodSchema)

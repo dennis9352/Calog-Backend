@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const noticeSchema = new mongoose.Schema({
     title: {
@@ -17,4 +18,4 @@ noticeSchema.virtual("noticeId").get(function () {
 noticeSchema.set("toJSON", {
     virtuals: true,
   });
-export default mongoose.model('Notice', noticeSchema)
+export default conn.model('Notice', noticeSchema)

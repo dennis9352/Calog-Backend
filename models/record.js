@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const recordSchema = new mongoose.Schema({
     userId: {
@@ -42,4 +43,4 @@ recordSchema.set("toJSON", {
     virtuals: true,
   });
 
-export default mongoose.model('Record', recordSchema)
+export default conn.model('Record', recordSchema)

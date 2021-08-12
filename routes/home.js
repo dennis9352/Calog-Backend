@@ -36,7 +36,6 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
                 'name': 1, 
                 'kcal': 1, 
                 'forOne': 1,
-                '_id' : 1, 
                 'score': {
                   '$meta': 'searchScore'
                 }

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-
 import dotenv from "dotenv"
+
 
 dotenv.config()
 const connect = () => {
@@ -13,7 +13,7 @@ const dbId = process.env.DBID
 const dbPw = process.env.DBPW
 
 
-mongoose.connect(`mongodb://${dbId}:${dbPw}@${IP}:27017/admin`, {
+export const conn = mongoose.createConnection(`mongodb://${dbId}:${dbPw}@${IP}:27017/admin`, {
 	dbName: 'calories',
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -28,9 +28,10 @@ mongoose.connection.on('error', err => {
 	console.error('MongoDB 연결 에러', err)
 	connect()
 })
-
-
 connect()
+
+
+
 
 
 // mongoose.connect('mongodb://localhost:27017/calories', {

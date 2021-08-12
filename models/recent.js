@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const recentSchema = new mongoose.Schema({
     keyword: {
@@ -9,4 +10,4 @@ export const recentSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model('Recent', recentSchema)
+export default conn.model('Recent', recentSchema)

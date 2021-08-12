@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const foodRecordSchema = new mongoose.Schema({
     foodId: {
@@ -27,4 +28,4 @@ export const foodRecordSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model('FoodRecord', foodRecordSchema)
+export default conn.model('FoodRecord', foodRecordSchema)

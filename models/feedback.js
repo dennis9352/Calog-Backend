@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const feedbackSchema = new mongoose.Schema({
     title: {
@@ -18,4 +19,4 @@ export const feedbackSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model('Feedback', feedbackSchema)
+export default conn.model('Feedback', feedbackSchema)
