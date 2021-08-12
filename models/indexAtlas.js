@@ -4,7 +4,7 @@ dotenv.config()
 
 const URI = process.env.ATLASURI
 export const conn2 = mongoose.createConnection(URI, {
-	dbName: 'local2',
+	dbName: 'atlas',
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,

@@ -1,7 +1,6 @@
 import express from "express";
 import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
-import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
 import {checkPermission} from '../middlewares/checkPermission.js'
 import Recent from '../models/recent.js'
@@ -13,7 +12,7 @@ const router = express.Router();
 router.get("/search/:keyword", checkPermission, async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
-      const nameKey = String(keyword) //키워드 값에 정규식 적용
+      const nameKey = String(keyword) //키워드 값을 스트링을 감싸줘야 쿼리에 변수로서 적용가능
       const {user} = res.locals  // 로그인한 유저와  로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
       const food = await Food.aggregate(
         [
@@ -35,7 +34,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
               }
             }
           },{
-            '$limit': 100
+            '$limit' : 1000
           }
         ]
       )  
