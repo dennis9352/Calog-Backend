@@ -13,17 +13,41 @@ const router = express.Router();
 router.get("/search/:keyword", checkPermission, async (req, res) => {
   try{    
       const keyword = decodeURIComponent(req.params.keyword);
-      const nameKey = new RegExp(keyword) //키워드 값에 정규식 적용
+      const nameKey = String(keyword) //키워드 값에 정규식 적용
       const {user} = res.locals  // 로그인한 유저와  로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
     
       if (!user){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.
-        let food =  await Food.find({name: nameKey}).lean()
-        for(let i = 0; i < food.length; i++){
-          let distance = levenshtein.get(nameKey, food[i]['name']);
-          const foodId = food[i]._id
-          food[i].distance = distance
-          food[i].foodId = foodId
-        }
+        const food = await Food.aggregate(
+          [
+            {
+              '$search': {
+                'index': 'haha', 
+                'text': {
+                  'query': nameKey, 
+                  'path': 'name',
+                  'fuzzy':{
+                    'maxEdits':2,
+                    'prefixLength': 2
+                  }               
+                }
+              }
+            }, {
+              '$project': {
+                'name': 1, 
+                'kcal': 1, 
+                'forOne': 1,
+                '_id' : 1, 
+                'score': {
+                  '$meta': 'searchScore'
+                }
+              }
+            },{
+              '$limit': 100
+            }
+          ]
+        )  
+
+        //food는 list 형태
          
         if(food.length ===0){
           res.sendStatus(204)   // 검색결과 없음.
