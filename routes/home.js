@@ -1,7 +1,6 @@
 import express from "express";
 import Food from '../models/food.js';
 import Favorite from '../models/favorite.js'
-import levenshtein from 'fast-levenshtein';
 import MostUsed from '../models/mostUsed.js';
 import {checkPermission} from '../middlewares/checkPermission.js'
 import Recent from '../models/recent.js'
