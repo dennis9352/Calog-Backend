@@ -25,4 +25,4 @@ foodSchema.set("toJSON", {
     virtuals: true,
   });
 
-export default mongoose.model('Food', foodSchema)
+export default mongoose.model('Calorie', foodSchema)
