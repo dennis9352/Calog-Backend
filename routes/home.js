@@ -15,89 +15,71 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
       const keyword = decodeURIComponent(req.params.keyword);
       const nameKey = String(keyword) //키워드 값에 정규식 적용
       const {user} = res.locals  // 로그인한 유저와  로그인 안한 유저 둘다 검색 가능, 로그인 되어있으면 user 선언
+      const food = await Food.aggregate(
+        [
+          {
+            '$search': {
+              'index': 'haha', 
+              'text': {
+                'query': nameKey, 
+                'path': 'name',            
+              }
+            }
+          }, {
+            '$project': {
+              'name': 1, 
+              'kcal': 1, 
+              'forOne': 1,
+              'score': {
+                '$meta': 'searchScore'
+              }
+            }
+          },{
+            '$limit': 100
+          }
+        ]
+      )  
+
+      //food는 list 형태
     
       if (!user){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.
-        const food = await Food.aggregate(
-          [
-            {
-              '$search': {
-                'index': 'haha', 
-                'text': {
-                  'query': nameKey, 
-                  'path': 'name',
-                  'fuzzy':{
-                    'maxEdits':2,
-                    'prefixLength': 2
-                  }               
-                }
-              }
-            }, {
-              '$project': {
-                'name': 1, 
-                'kcal': 1, 
-                'forOne': 1,
-                'score': {
-                  '$meta': 'searchScore'
-                }
-              }
-            },{
-              '$limit': 100
-            }
-          ]
-        )  
-
-        //food는 list 형태
-         
+                 
         if(food.length ===0){
           res.sendStatus(204)   // 검색결과 없음.
           return;
         }else{
-          // res.send(food)  //문제 없을 시 food 내려줌.
-          const sortingField = 'distance';
-          res.json(food.sort(function(a,b){
-            return a[sortingField] - b[sortingField]
-          }))
+          res.json({food})  //문제 없을 시 food 내려줌.
+          
         }
       
        
       }else if(user){ //로그인했을때(즐겨찾기 있는 경우와 없는 경우로 나뉨)
         const userId = user._id
-        let food = await Food.find({name: nameKey}).lean()
         const favoriteFood = await Favorite.findOne({userId:userId}) //로그인 했으면 Favorite db collection에서 userId에 속해있는 foodId(즐겨찾기목록) 가져옴. 
         
         if(!favoriteFood){   //로그인한 유저가 즐겨찾기한 음식이 없을 경우
-          let food =  await Food.find({name: nameKey}).lean()
+          
           for(let i = 0; i < food.length; i++){
-            let distance = levenshtein.get(nameKey, food[i]['name']);
             const foodId = food[i]._id
             food[i].foodId = foodId
-            food[i].distance = distance
-            
         }
           if(food.length ===0){
             res.sendStatus(204)   // 검색결과 없음.
             return;
           }else{
-            const sortingField = 'distance';
-            res.json(food.sort(function(a,b){
-              return a[sortingField] - b[sortingField]
-            }))
+            res.json({food})
           }
-        }else{  //로그인한 유저가 즐겨찾기 목록이 있을경우
+        }else if(favoriteFood){  //로그인한 유저가 즐겨찾기 목록이 있을경우
           const favoriteList = favoriteFood.foodId //[foodId1, foodId2...]
         
           for(let i = 0; i < food.length; i++){
             if(favoriteList.includes(food[i]['_id'])){
               const foodId = food[i]._id
               food[i].foodId = foodId
-              let distance = levenshtein.get(nameKey, food[i]['name']);
-              food[i].distance = distance
               food[i].isLike = true //favoriteList(즐겨찾기 목록)에 전체 검색결과에서의 foodId가 들어있으면 isLike: true 추가
             }else{
               const foodId = food[i]._id
               food[i].foodId = foodId
-              let distance = levenshtein.get(nameKey, food[i]['name']);
-              food[i].distance = distance
             }
           }
           
@@ -105,14 +87,8 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
             res.sendStatus(204)   // 검색결과 없음.
             return;
           }else{
-            // res.send(food) //문제 없을 시 foodList 값 내려줌.
-            const sortingField = 'distance';
-            res.json(food.sort(function(a,b){
-            return a[sortingField] - b[sortingField]
-          }))
+            res.json({food}) //문제 없을 시 foodList 값 내려줌.
           }
-  
-  
         }
              }
 
