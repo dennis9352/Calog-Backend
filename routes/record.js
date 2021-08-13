@@ -21,8 +21,8 @@ router.post('/',checkPermission, async (req,res) => {
     }
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
-    const year = todayDate.split("-")[0]
-    const month = todayDate.split("-")[1]
+    const year = date.split("-")[0]
+    const month = date.split("-")[1]
     moment.tz.setDefault("Asia/Seoul");
     
     if(!res.locals.user){                     // 비로그인유저
@@ -88,14 +88,15 @@ router.post('/',checkPermission, async (req,res) => {
               try {
                 user.records.push(newRecord._id);   //해당 유저에 기록 저장
                 user.deleteList = []
-                await user.save();
+                await user.save()
               } catch (err) {
                 console.log(err);
               }
             });
+            
             res.sendStatus(200)
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
-
+        
         if (record.bmr !== bmr && date === todayDate){    //기록의 기초대사량이 지금 기초대사량이랑 다르고 날짜가 오늘 날짜이면 변경
           record.bmr = bmr;
         }
@@ -129,8 +130,9 @@ router.post('/',checkPermission, async (req,res) => {
         }
 
         await record.save()
+        
         user.deleteList = []
-        user.save()
+        await user.save()
         res.sendStatus(200)
     } 
     }catch(err){
@@ -146,6 +148,7 @@ router.delete('/:recordId',isAuth, async(req,res) => {
     const { date, type } = req.body
     const userId = res.locals.user._id
     const record = await Record.findById(recordId).populate('foodRecords').exec()
+    let totalCalories = record.totalCalories
     const user = await User.findById(userId)
     const deleteList = []
     try{
@@ -153,6 +156,7 @@ router.delete('/:recordId',isAuth, async(req,res) => {
     for(let i=record.foodRecords.length -1; i >= 0; i--){
       if(record.foodRecords[i].type === type){
         deleteList.push(record.foodRecords[i])
+        totalCalories -= record.foodRecords[i].resultKcal
         record.foodRecords.splice(i,1)
       }
     } // 해당 type 이미지 삭제
@@ -172,9 +176,11 @@ router.delete('/:recordId',isAuth, async(req,res) => {
       date: date, 
       type : type
     }).exec()
+
+    record.totalCalories = totalCalories
     await record.save()
     //만약 기록에 칼로리 기록이 없다면 삭제
-    if (!record.Foodrecords){
+    if (!record.foodRecords.length){
       await Record.findByIdAndDelete(recordId)
       for(let i in user.records){
         if(user.records[i] == recordId){
@@ -182,7 +188,6 @@ router.delete('/:recordId',isAuth, async(req,res) => {
         }
       }
     }
-    // 최근 삭제리스트 유저에 저장
     user.deleteList.push(deleteList)
     await user.save()
 
