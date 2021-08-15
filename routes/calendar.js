@@ -64,16 +64,20 @@ router.get('/dash',checkPermission, async(req, res) => {
 router.put('/blind', checkPermission, async(req, res) => {
     const { weightBlind, heightBlind, bmrBlind } = req.body
     const user = res.locals.user
-
+    const userInfo = await User.findById(user._id)
+    console.log(userInfo)
+    console.log(req.body)
     try{
-    const userId = user._id
-    await User.findByIdAndUpdate(userId, {
-        $set: {
-          weightBlind: weightBlind,
-          heightBlind: heightBlind,
-          bmrBlind: bmrBlind,
-        },
-      }).exec();
+    if(weightBlind !== undefined){
+        userInfo.weightBlind = weightBlind
+    }
+    if(heightBlind !== undefined){
+        userInfo.heightBlind = heightBlind
+    }
+    if(bmrBlind !== undefined){
+        userInfo.bmrBlind = bmrBlind
+    }   
+    await userInfo.save()
     res.sendStatus(200)
     }catch(err){
         console.log(err)
