@@ -157,4 +157,27 @@ router.post('/feedback',isAuth, async(req,res) => {
     }
 });
 
+router.post('/feedbackFood',isAuth, async(req,res) => {
+    const userId = res.locals.user._id
+    const nickname = res.locals.user.nickname
+    const { contents, date } = req.body
+    const title = "음식추가요청"
+    try{
+    await Feedback.create({
+        userId : userId,
+        nickname : nickname,
+        title : title,
+        contents : contents,
+        date : date,
+    })
+    res.sendStatus(200)
+
+    }catch(err){
+        console.log(err)
+        res.status(400).send({
+            errorMessage: "음식추가요청에 실패했습니다"
+        })
+    }
+});
+
 export default router;
