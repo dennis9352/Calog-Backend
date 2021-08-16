@@ -26,4 +26,4 @@ foodSchema.set("toJSON", {
   virtuals: true,
 });
 
-export default conn2.model('Calorie', foodSchema)
+export default conn2.model('Food', foodSchema)
