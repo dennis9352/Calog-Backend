@@ -171,7 +171,6 @@ router.post('/feedbackFood',isAuth, async(req,res) => {
         date : date,
     })
     res.sendStatus(200)
-
     }catch(err){
         console.log(err)
         res.status(400).send({
@@ -179,5 +178,6 @@ router.post('/feedbackFood',isAuth, async(req,res) => {
         })
     }
 });
+
 
 export default router;
