@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 const date = new Date()
 const ryear = date.getFullYear();
@@ -19,6 +20,10 @@ export const userSchema = new mongoose.Schema({
     age: { type: Number, default: 0 },
     bmr: {type: Array, default:[{bmr: 0, date: registerDate }]},
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
+    heightBlind: {type: Boolean, default: false},
+    weightBlind: {type: Boolean, default: false},
+    bmrBlind: {type: Boolean, default: false},
+    deleteList: {type: Array, default: []}
 });
 
-export default mongoose.model('User', userSchema)
+export default conn.model('User', userSchema)

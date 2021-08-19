@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const foodRecordSchema = new mongoose.Schema({
     foodId: {
@@ -7,8 +8,11 @@ export const foodRecordSchema = new mongoose.Schema({
     name: {
         type: String,
     },
+    kcal: {
+        type: Number,
+    },
     amount: { 
-        type: String,
+        type: Number,
     },
     resultKcal: {
         type: Number,
@@ -16,12 +20,12 @@ export const foodRecordSchema = new mongoose.Schema({
     type: {
         type: String,
     },
+    date: {
+        type: String,
+    },
+    userId: {
+        type: String,
+    }
 });
-foodRecordSchema.virtual("foodRecordId").get(function () {
-    return this._id.toHexString();
-  });
-foodRecordSchema.set("toJSON", {
-    virtuals: true,
-  });
 
-export default mongoose.model('FoodRecord', foodRecordSchema)
+export default conn.model('FoodRecord', foodRecordSchema)

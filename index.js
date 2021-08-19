@@ -12,7 +12,7 @@ dotenv.config()
 const app = express();
 
 const corsOption = {
-    origin: "http://localhost:3000",
+    origin: process.env.CORS,
     Credential: true,
     optionSuccessStatus: 200,
 };
@@ -35,9 +35,6 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
-app.get('/', (req, res) => {
-    res.send('그린 업 블루 다운')
-})
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("서버 연결 성공");

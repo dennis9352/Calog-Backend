@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const mostUsedSchema = new mongoose.Schema({
     keyword: {
@@ -10,4 +11,4 @@ export const mostUsedSchema = new mongoose.Schema({
     
 });
 
-export default mongoose.model('MostUsed', mostUsedSchema)
+export default conn.model('MostUsed', mostUsedSchema)

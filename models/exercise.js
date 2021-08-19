@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import {conn} from './index.js'
 
 export const exerciseSchema = new mongoose.Schema({
     kcal: {
@@ -6,7 +7,10 @@ export const exerciseSchema = new mongoose.Schema({
     },
     name: {
         type: String, 
+    },
+    url: {
+        type: String,
     }
 });
 
-export default mongoose.model('Exercise', exerciseSchema)
+export default conn.model('Exercise', exerciseSchema)

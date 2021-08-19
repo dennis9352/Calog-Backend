@@ -66,9 +66,13 @@ router.get('/list', isAuth, async(req, res)=>{
             let foodList = []
             for(let i = idList.length -1; i >= 0; i--){
                 const food = await Food.findOne({_id: idList[i]})
-                foodList.push(food)
+                const foodId = food._id
+                const name = food.name
+                const kcal = food.kcal
+                const favoriteObject = {foodId, name, kcal}
+                foodList.push(favoriteObject)
             }
-            res.json(foodList); //즐겨찾기에 등록된 음식 리스트 내려줌.
+            res.json({foodList}); //즐겨찾기에 등록된 음식 리스트 내려줌.
         }
 
     }catch(err){
