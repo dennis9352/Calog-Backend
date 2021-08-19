@@ -1,7 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
-import axios from "axios"
 import passport from '../passport/NaverStrategy.js'
 dotenv.config()
 
@@ -17,12 +16,15 @@ router.get('/oauth', passport.authenticate('naver', {
   failureRedirect: '/',
 }),  (req, res) => {
 
-  const token = createJwtToken(req.user._id);
-  console.log(token)
-
-
- 
-  res.redirect("http://localhost:3000/naver?token="+token)
+  try{
+    const token = createJwtToken(req.user._id);
+    console.log("여긴 ok")
+  //쿠키로 토큰 발급 후 리다이랙
+  res.status(200).redirect("https://www.calog.app/naver?token="+token)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({errorMessage: "로그인 실행중 에러가 발생 하였습니다"})
+  }
 });
 function createJwtToken(id) {
   return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
