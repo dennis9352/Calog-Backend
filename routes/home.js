@@ -21,7 +21,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
               'index': 'haha', 
               'text': {
                 'query': nameKey, 
-                'path': 'name',            
+                'path': 'name'      
               }
             }
           }, {
@@ -281,9 +281,13 @@ router.get('/recommend', async(req, res) => {
     for (let i = 0; i < 10; i++){
       const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
       const randomKeyword = await Food.findOne().skip(randomKey).limit(1);
-      randomList.push(randomKeyword)
-      console.log(randomKeyword)
+      const foodId = randomKeyword._id
+      const name = randomKeyword.name
+      const kcal = randomKeyword.kcal
+      const randomObject ={foodId, name, kcal}
+      randomList.push(randomObject)
     }
+    
     
     
     
