@@ -16,7 +16,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new KakaoStrategy
   ({
     clientID: process.env.K_API_KEY,
-    callbackURL: "https://2k1.shop/api/auth_kakao/oauth"
+    callbackURL: "https://2k1.shop/api/auth_kakao/kakao"
     
   },
   async function(accessToken, refreshToken, profile, cb) {
