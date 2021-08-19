@@ -19,11 +19,14 @@ router.get('/kakao', passport.authenticate('kakao'));
 // 두번째 코드 - callback URL
 router.get('/oauth', passport.authenticate('kakao', {
   failureRedirect: '/',
-}), (req, res) => {
-
+}), (req, res) => {try{
   const token = createJwtToken(req.user._id);
-  
-  res.status(200).redirect("http://localhost:3000/kakao?token="+token)
+//쿠키로 토큰 발급 후 리다이랙
+res.status(200).redirect("https://www.calog.app/kakao?token="+token)
+}catch(err){
+  console.log(err)
+  res.status(400).send({errorMessage: "로그인 실행중 에러가 발생 하였습니다"})
+}
 });
 function createJwtToken(id) {
   return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });

@@ -21,9 +21,16 @@ router.get('/oauth', passport.authenticate('google', {
   failureRedirect: '/',
 }), (req, res) => {
 
-  const token = createJwtToken(req.user._id);
+  try{
+    const token = createJwtToken(req.user._id);
   //쿠키로 토큰 발급 후 리다이랙
-  res.status(200).redirect("http://localhost:3000/google?token="+token)
+  res.status(200).redirect("https://www.calog.app/google?token="+token)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({errorMessage: "로그인 실행중 에러가 발생 하였습니다"})
+  }
+
+  
 });
 function createJwtToken(id) {
   return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
