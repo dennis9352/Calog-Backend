@@ -38,6 +38,7 @@ deploy:
       repo: TeamCalog/Calog-Backend
       branch: main
 notifications:
+  slack: caloghq:Z8CqGWQV36ZrNymkdQarm6E9
   email:
     recipients:
       - dennis9352@gmail.com
