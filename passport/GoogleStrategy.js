@@ -13,7 +13,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_SECRET,
-    callbackURL: "https://www.calog.app/api/auth_google/oauth"
+    callbackURL: "https://2k1.shop/api/auth_google/oauth"
   
   },
   async function(accessToken, refreshToken, profile, cb) {
