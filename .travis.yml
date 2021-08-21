@@ -9,6 +9,7 @@ branches:
 before_deploy: 
   - rm -rf node_modules
   - rm -rf yarn.lock
+  - rm -rf package-lock.json
   - zip -r Calories-Backend * 
   - mkdir -p deploy 
   - mv Calories-Backend.zip deploy/Calories-Backend.zip
