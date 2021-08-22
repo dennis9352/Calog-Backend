@@ -22,7 +22,9 @@ export const checkPermission = async (req, res, next) => {
         if (error) {
           next()
         }
-        
+        if(!decoded){
+          return next()
+        }
   
         const user = await User.findOne({"_id": decoded.id});
         if (!user) {
