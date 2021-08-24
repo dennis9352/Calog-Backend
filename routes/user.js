@@ -123,6 +123,15 @@ router.post('/register',validateRegister, async (req, res) => {
     console.log(res.locals)
     res.send({ user: res.locals.user });
   });
+//csrf토큰 발급
+  router.get('/csrf-token', async (req, res) => {
+    const csrfToken = await generateCSRFToken()
+    res.status(200).json({ csrfToken })
+  })
+
+  async function generateCSRFToken() {
+    return bcrypt.hash(process.env.CSRF_SECRET, 1)
+  }
 
 
 //바디스펙 기록
