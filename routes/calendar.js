@@ -65,8 +65,7 @@ router.put('/blind', checkPermission, async(req, res) => {
     const { weightBlind, heightBlind, bmrBlind } = req.body
     const user = res.locals.user
     const userInfo = await User.findById(user._id)
-    console.log(userInfo)
-    console.log(req.body)
+
     try{
     if(weightBlind !== undefined){
         userInfo.weightBlind = weightBlind

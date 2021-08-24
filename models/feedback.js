@@ -6,7 +6,7 @@ export const feedbackSchema = new mongoose.Schema({
         type: String,
     },
     contents: {
-        type: String, 
+        type: String,
     },
     userId: {
         type: String,
@@ -16,6 +16,14 @@ export const feedbackSchema = new mongoose.Schema({
     },
     date: {
         type: String,
+    },
+    phoneNum: {
+        type: String,
+        default: "n/a",
+    },
+    instagramId: {
+        type: String,
+        default: "n/a",
     },
 });
 
