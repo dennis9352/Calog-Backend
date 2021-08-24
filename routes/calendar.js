@@ -9,9 +9,9 @@ import "moment-timezone"
 
 const router = express.Router();
 
-router.get('/exercise', async(req, res) => {
+router.get('/exercise',checkPermission, async(req, res) => {
     try{
-    const exercise = await Exercise.find({}).limit(5)
+    const exercise = await Exercise.aggregate([{ $sample: { size: 5 } }])
     
     res.status(200).json({ exercise })
     
@@ -29,7 +29,7 @@ router.get('/dash',checkPermission, async(req, res) => {
     
     if(!user){
         return res.status(200).send({
-            message: "로그인 안했는데 예외처리 어떻게 할지 몰라서 일단 일케해둠"
+            message: "로그인유저가 아닙니다."
         })
     }
     const userId = res.locals.user._id

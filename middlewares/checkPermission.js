@@ -5,14 +5,17 @@ dotenv.config()
 
 export const checkPermission = async (req, res, next) => {
     const authHeader = req.get('Authorization');
-    if(!authHeader){
-      return next()
-    } 
+
+    if(!(authHeader && authHeader.startsWith('Bearer '))){
+
+      return next();
+    }
     const token = authHeader.split(' ')[1];
 
     if(!token){
-      return next()
-    } 
+       return next();
+    }
+
 
     // TODO: Make it secure!
     jwt.verify(
@@ -20,18 +23,21 @@ export const checkPermission = async (req, res, next) => {
       process.env.JWT_SECRET,
       async (error, decoded) => {
         if (error) {
-          next()
-        }
-        if(!decoded){
           return next()
         }
-  
-        const user = await User.findOne({"_id": decoded.id});
-        if (!user) {
-          next()
+
+        if(!decoded){
+          return next();
         }
+
+
+        const user = await User.findOne({"_id": decoded.id});
+      if (!user) {
+        return res.status(401).json({message: 'CheckPermission Error2'});
+      }
+
         res.locals.user = user;
-        next();
+        return next();
       }
     );
   };
