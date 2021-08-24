@@ -11,8 +11,7 @@ export const csrfCheck = (req, res, next) => {
   }
 
   const csrfHeader = req.get('_csrf-token');
-  console.log(csrfHeader)
-  console.log(req.headers)
+  
   if (!csrfHeader) {
     console.warn('Missing required "_csrf-token" header.', req.headers.origin);
     return res.status(403).json({ message: 'Failed CSRF check' });
