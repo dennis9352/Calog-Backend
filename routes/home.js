@@ -41,8 +41,13 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
 
       //food는 list 형태
     
-      if (!user){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.
-                 
+      if (!user){  //로그인 안했으면 일반적인 검색창, 즐겨찾기 반영안됨.        
+        for(let i = 0; i<food.length; i++){
+        
+          const foodId = food[i]['_id']
+          food[i].foodId = foodId
+        }
+               
         if(food.length ===0){
           res.sendStatus(204)   // 검색결과 없음.
           return;
