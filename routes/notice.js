@@ -138,15 +138,25 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
 router.post('/feedback',isAuth, async(req,res) => {
     const userId = res.locals.user._id
     const nickname = res.locals.user.nickname
-    const { title, contents, date } = req.body
+    const { title, contents, date ,phoneNum, instagramId} = req.body
     try{
-    await Feedback.create({
+    
+    const feedback = await Feedback.create({
         userId : userId,
         nickname : nickname,
         title : title,
         contents : contents,
         date : date,
     })
+
+    if(phoneNum !== undefined){
+        feedback.phoneNum = phoneNum
+    }
+    if(instagramId !== undefined){
+        feedback.instagramId = instagramId
+    }
+    
+    await feedback.save()
     res.sendStatus(200)
 
     }catch(err){

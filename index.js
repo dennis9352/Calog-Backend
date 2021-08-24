@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import "./models/index.js";
 import passport from 'passport';
 import session from 'express-session' 
+import { csrfCheck } from "./middlewares/csrf.js";
 import * as Sentry from "@sentry/node";
 
 dotenv.config()
@@ -36,6 +37,7 @@ app.use(passport.session());
 app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(csrfCheck)
 app.use("/api", router);
 
 app.use(Sentry.Handlers.errorHandler({}));
