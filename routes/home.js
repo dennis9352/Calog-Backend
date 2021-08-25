@@ -286,17 +286,11 @@ router.get('/recommend', async(req, res) => {
   try{
     const randomList = []
     for (let i = 0; i < 10; i++){
-      const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
+      const randomCount = await Recommend.count()
+      const randomKey = Math.floor(Math.random() * randomCount); //나중에 변경
       const randomKeyword = await Recommend.findOne().skip(randomKey).limit(1);
-      const foodId = randomKeyword._id
-      const name = randomKeyword.name
-      const kcal = randomKeyword.kcal
-      const randomObject ={foodId, name, kcal}
-      randomList.push(randomObject)
+      randomList.push(randomKeyword)
     }
-    
-    
-    
     
     res.json({randomList})
   }catch(err){
