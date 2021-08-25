@@ -65,8 +65,8 @@ router.get('/list', isAuth, async(req, res)=>{
             let idList = existFood.foodId // [foodId1, foodId2....] 즐겨찾기에 등록된 foodId 모두 조회
             let foodList = []
             for(let i = idList.length -1; i >= 0; i--){
-                const food = await Food.findOne({_id: idList[i]})
-                const foodId = food._id
+                const food = await Food.findById(idList[i])
+                const foodId = food['_id']
                 const name = food.name
                 const kcal = food.kcal
                 const favoriteObject = {foodId, name, kcal}

@@ -23,7 +23,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
               'index': 'haha',
               'text': {
                 'query': nameKey, 
-                'path': 'name',   
+                'path': 'name' 
               }
             }
           }, {
