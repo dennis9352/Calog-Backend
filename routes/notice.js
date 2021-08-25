@@ -3,9 +3,30 @@ import Notice from '../models/notice.js'
 import {isAuth} from '../middlewares/auth.js'
 import dotenv from 'dotenv'
 import Feedback from "../models/feedback.js";
-
+import Slack from "slack-node"
+import moment from "moment"
+import "moment-timezone"
 dotenv.config()
 const router = express.Router();
+
+const slack = new Slack();
+slack.setWebhook(process.env.SLACKWEBHOOK)
+const send = async (feedbackInfo) => {
+        slack.webhook(
+        {
+            text: `--------피드백알림--------\n닉네임: ${feedbackInfo.nickname}\n제목: ${feedbackInfo.title}\n내용: ${feedbackInfo.contents}\n전화번호: ${feedbackInfo.phoneNum}\n인스타그램: ${feedbackInfo.instagramId}\n날짜: ${feedbackInfo.date}`,
+            channel: "#feedbacks",
+            username: "FeedbackBot",
+            icon_emoji: "slack",
+        },
+        (error, response) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+        })
+};
+
 
 router.post('/', isAuth, async(req, res) => {               // 공지사항 쓰기
     const {title, contents, date, password} = req.body
@@ -136,6 +157,8 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
 })
 
 router.post('/feedback',isAuth, async(req,res) => {
+    const newdate = moment()
+    const todayDate = newdate.format("YYYY-MM-DD HH:mm:ss")
     const userId = res.locals.user._id
     const nickname = res.locals.user.nickname
     const { title, contents, date ,phoneNum, instagramId} = req.body
@@ -157,6 +180,16 @@ router.post('/feedback',isAuth, async(req,res) => {
     }
     
     await feedback.save()
+    const feedbackInfo = {
+        nickname: nickname,
+        title: title,
+        contents: contents,
+        phoneNum: phoneNum,
+        instagramId: instagramId,
+        date: todayDate,
+    }
+    await send(feedbackInfo)
+    
     res.sendStatus(200)
 
     }catch(err){
@@ -168,11 +201,14 @@ router.post('/feedback',isAuth, async(req,res) => {
 });
 
 router.post('/feedbackFood',isAuth, async(req,res) => {
+    const newdate = moment()
+    const todayDate = newdate.format("YYYY-MM-DD HH:mm:ss")
     const userId = res.locals.user._id
     const nickname = res.locals.user.nickname
     const { contents, date } = req.body
     const title = "음식추가요청"
     try{
+
     await Feedback.create({
         userId : userId,
         nickname : nickname,
@@ -180,6 +216,17 @@ router.post('/feedbackFood',isAuth, async(req,res) => {
         contents : contents,
         date : date,
     })
+
+    const feedbackInfo = {
+        nickname: nickname,
+        title: title,
+        contents: contents,
+        phoneNum: "-",
+        instagramId: "-",
+        date: todayDate,
+    }
+    await send(feedbackInfo)
+
     res.sendStatus(200)
     }catch(err){
         console.log(err)

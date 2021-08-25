@@ -133,6 +133,25 @@ router.post('/register',validateRegister, async (req, res) => {
     return bcrypt.hash(process.env.CSRF_SECRET, 1)
   }
 
+  //프로필 이미지 수정
+  router.post('/update-profile-image',isAuth, async (req, res) => {
+   try{
+    console.log(req.body)
+    const {user} = res.locals
+    const userId = user._id
+    const modified_image = req.body.url
+    const target = await User.findOne({_id:userId})
+    target.profile_image = modified_image
+    target.save()
+    res.status(200).json({result:"success"})
+
+   }catch(err){
+     console.log(err)
+     res.status(400).json({errorMessage:"이미지 수정에 실패하였습니다"})
+   }
+   
+  });
+
 
 //바디스펙 기록
 router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
