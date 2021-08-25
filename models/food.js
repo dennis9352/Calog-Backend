@@ -14,8 +14,32 @@ export const foodSchema = new mongoose.Schema({
     isLike:{
       type: Boolean,
     },
-    distance:{
-      type: Number,
+    measurement:{
+      type: String,
+    },
+    protein:{
+      type: String,
+    },
+    fat:{
+      type: String,
+    },
+    carbo:{
+      type: String,
+    },
+    sugars:{
+      type: String,
+    },
+    natrium:{
+      type: String,
+    },
+    cholesterol:{
+      type: String,
+    },
+    fattyAcid:{
+      type: String,
+    },
+    transFattyAcid:{
+      type: String,
     }
 });
 
