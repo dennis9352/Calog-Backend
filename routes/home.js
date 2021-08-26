@@ -5,7 +5,9 @@ import MostUsed from '../models/mostUsed.js';
 import {checkPermission} from '../middlewares/checkPermission.js'
 import Recent from '../models/recent.js'
 import {isAuth} from '../middlewares/auth.js'
+import Recommend from '../models/recommend.js'
 const router = express.Router();
+
 
 //검색 API
 
@@ -18,10 +20,10 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
         [
           {
             '$search': {
-              'index': 'haha', 
+              'index': 'haha',
               'text': {
                 'query': nameKey, 
-                'path': 'name'      
+                'path': 'name' 
               }
             }
           }, {
@@ -29,6 +31,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
               'name': 1, 
               'kcal': 1, 
               'forOne': 1,
+              'measurement':1,
               'score': {
                 '$meta': 'searchScore'
               }
@@ -284,17 +287,11 @@ router.get('/recommend', async(req, res) => {
   try{
     const randomList = []
     for (let i = 0; i < 10; i++){
-      const randomKey = Math.floor(Math.random() * 49836); //나중에 변경
-      const randomKeyword = await Food.findOne().skip(randomKey).limit(1);
-      const foodId = randomKeyword._id
-      const name = randomKeyword.name
-      const kcal = randomKeyword.kcal
-      const randomObject ={foodId, name, kcal}
-      randomList.push(randomObject)
+      const randomCount = await Recommend.count()
+      const randomKey = Math.floor(Math.random() * randomCount); //나중에 변경
+      const randomKeyword = await Recommend.findOne().skip(randomKey).limit(1);
+      randomList.push(randomKeyword)
     }
-    
-    
-    
     
     res.json({randomList})
   }catch(err){
