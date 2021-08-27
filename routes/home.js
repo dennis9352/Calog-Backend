@@ -31,6 +31,7 @@ router.get("/search/:keyword", checkPermission, async (req, res) => {
               'name': 1, 
               'kcal': 1, 
               'forOne': 1,
+              'measurement':1,
               'score': {
                 '$meta': 'searchScore'
               }
@@ -217,7 +218,6 @@ router.post('/recentKey', isAuth, async(req, res) =>{
       }
       
     }
-    console.log(recentKey.keyword)
     
     res.sendStatus(200);
     
@@ -302,4 +302,49 @@ router.get('/recommend', async(req, res) => {
   }
   
   
+})
+
+//데이터 추가 API
+
+router.post('/addData', async(req, res) => {
+  try{
+  const {name} = req.body;
+  const {forOne}= req.body;
+  const {kcal} = req.body;
+  const {measurement} = req.body;
+  const {protein} = req.body;
+  const {fat} = req.body;
+  const {carbo} = req.body;
+  const {sugars} = req.body;
+  const {natrium} = req.body;
+  const {cholesterol} = req.body;
+  const {fattyAcid} = req.body;
+  const {transFattyAcid} = req.body;
+  const {unFattyAcid} = req.body;
+    
+  await Food.create({
+    name:name,
+    forOne:forOne,
+    kcal: kcal,
+    measurement:measurement,
+    protein:protein,
+    fat:fat,
+    carbo:carbo,
+    sugars:sugars,
+    natrium:natrium,
+    cholesterol:cholesterol,
+    fattyAcid:fattyAcid,
+    transFattyAcid:transFattyAcid,
+    unFattyAcid:unFattyAcid
+  })
+
+  res.sendStatus(200);
+  
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "데이터 추가중 에러발생"
+    })
+    return;
+  }
 })
