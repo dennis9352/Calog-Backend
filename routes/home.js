@@ -308,20 +308,39 @@ router.get('/recommend', async(req, res) => {
 
 router.post('/addData', async(req, res) => {
   try{
-  const {name} = req.body;
-  const {forOne}= req.body;
-  const {kcal} = req.body;
-  const {measurement} = req.body;
-  const {protein} = req.body;
-  const {fat} = req.body;
-  const {carbo} = req.body;
-  const {sugars} = req.body;
-  const {natrium} = req.body;
-  const {cholesterol} = req.body;
-  const {fattyAcid} = req.body;
-  const {transFattyAcid} = req.body;
-  const {unFattyAcid} = req.body;
-    
+  let {name, forOne, kcal, measurement, protein, fat, carbo, sugars, natrium, cholesterol, fattyAcid, transFattyAcid, unFattyAcid  } = req.body;
+  
+  if (!protein){
+    protein = "-"
+  }
+  if (!fat){
+    fat = "-"
+  }
+  if (!carbo){
+    carbo = "-"
+  }
+  if (!sugars){
+    sugars = "-"
+  }
+  if (!natrium){
+    natrium = "-"
+  }
+  if (!cholesterol){
+    cholesterol = "-"
+  }
+  if (!fattyAcid){
+    fattyAcid = "-"
+  }
+  if (!transFattyAcid){
+    transFattyAcid = "-"
+  }
+  if (!unFattyAcid){
+    unFattyAcid = "-"
+  }
+  
+
+
+
   await Food.create({
     name:name,
     forOne:forOne,
