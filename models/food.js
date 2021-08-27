@@ -19,30 +19,39 @@ export const foodSchema = new mongoose.Schema({
     },
     protein:{
       type: String,
+      default: "-"
     },
     fat:{
       type: String,
+      default: "-"
     },
     carbo:{
       type: String,
+      default: "-"
     },
     sugars:{
       type: String,
+      default: "-"
     },
     natrium:{
       type: String,
+      default: "-"
     },
     cholesterol:{
       type: String,
+      default: "-"
     },
     fattyAcid:{
       type: String,
+      default: "-"
     },
     transFattyAcid:{
       type: String,
+      default: "-"
     },
     unFattyAcid:{
       type: String,
+      default: "-"
     }
 });
 
