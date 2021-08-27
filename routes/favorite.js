@@ -69,7 +69,9 @@ router.get('/list', isAuth, async(req, res)=>{
                 const foodId = food['_id']
                 const name = food.name
                 const kcal = food.kcal
-                const favoriteObject = {foodId, name, kcal}
+                const forOne = food.forOne
+                const measurement =food.measurement
+                const favoriteObject = {foodId, name, kcal, forOne, measurement}
                 foodList.push(favoriteObject)
             }
             res.json({foodList}); //즐겨찾기에 등록된 음식 리스트 내려줌.

@@ -40,6 +40,9 @@ export const foodSchema = new mongoose.Schema({
     },
     transFattyAcid:{
       type: String,
+    },
+    unFattyAcid:{
+      type: String,
     }
 });
 
