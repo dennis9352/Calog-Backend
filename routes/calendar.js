@@ -77,7 +77,12 @@ router.put('/blind', checkPermission, async(req, res) => {
         userInfo.bmrBlind = bmrBlind
     }   
     await userInfo.save()
-    res.sendStatus(200)
+    const userBlind = {
+        weight : userInfo.weightBlind,
+        height : userInfo.heightBlind,
+        bmr : userInfo.bmr,
+    }
+    res.status(200).json(userBlind)
     }catch(err){
         console.log(err)
         res.status(400).send({

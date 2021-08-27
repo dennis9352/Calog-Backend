@@ -68,6 +68,8 @@ router.post('/',checkPermission, async (req,res) => {
               let amount = foodList[i].amount
               let kcal = foodList[i].kcal
               let resultKcal = Math.round(kcal * amount)
+              let forOne = foodList[i].forOne
+              let measurement = foodList[i].measurement
 
               let foodRecord = await FoodRecord.create({
                   foodId : foodId,
@@ -75,6 +77,8 @@ router.post('/',checkPermission, async (req,res) => {
                   kcal : kcal,
                   amount : amount,
                   resultKcal : resultKcal,
+                  forOne : forOne,
+                  measurement: measurement,
                   type: type,
                   date: date,
                   userId: userId
@@ -107,6 +111,8 @@ router.post('/',checkPermission, async (req,res) => {
           let amount = foodList[i].amount
           let kcal = foodList[i].kcal
           let resultKcal = Math.round(kcal * amount)
+          let forOne = foodList[i].forOne
+          let measurement = foodList[i].measurement
           
           let foodRecord = await FoodRecord.create({
               foodId : foodId,
@@ -114,6 +120,8 @@ router.post('/',checkPermission, async (req,res) => {
               kcal: kcal,
               amount : amount,
               resultKcal : resultKcal,
+              forOne : forOne,
+              measurement: measurement,
               type: type,
               date: date,
               userId: userId

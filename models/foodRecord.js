@@ -17,6 +17,12 @@ export const foodRecordSchema = new mongoose.Schema({
     resultKcal: {
         type: Number,
     },
+    forOne:{
+        type: Number,
+    },
+    measurement:{
+        type: String,
+    },
     type: {
         type: String,
     },
