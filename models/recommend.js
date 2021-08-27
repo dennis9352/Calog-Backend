@@ -10,6 +10,12 @@ export const recommendSchema = new mongoose.Schema({
     },
     foodId:{
         type: String
+    },
+    forOne:{
+        type: String
+    },
+    measurement:{
+        type: String
     }
     
 });
