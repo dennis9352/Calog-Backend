@@ -101,7 +101,8 @@ router.post('/register',validateRegister, async (req, res) => {
 
 //로그인 API
   router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    try{
+      const { email, password } = req.body;
     const user = await User.findOne({email : email});
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -112,9 +113,15 @@ router.post('/register',validateRegister, async (req, res) => {
     }
     const token = createJwtToken(user._id);
     res.status(200).json({ token });
+    }
+    catch(err){
+      console.log(err)
+      res.status(400).json({errorMessage:"로그인에 실패하였습니다"})
+    }
     })
 
-  function createJwtToken(id) {
+  
+    function createJwtToken(id) {
     return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
   }
   
