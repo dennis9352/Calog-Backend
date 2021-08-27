@@ -22,7 +22,7 @@ export const userSchema = new mongoose.Schema({
     records: [{type: mongoose.Schema.Types.ObjectId, ref:'Record'}],
     heightBlind: {type: Boolean, default: false},
     weightBlind: {type: Boolean, default: false},
-    bmrBlind: {type: Boolean, default: false },
+    bmrBlind: {type: Boolean, default: false},
     deleteList: {type: Array, default: [] }
 });
 
