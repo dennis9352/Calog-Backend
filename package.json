@@ -7,7 +7,9 @@
     "test": "exit",
     "product": "node index.js",
     "dev": "nodemon index.js",
-    "start": "pm2 start index.js"
+    "start": "pm2 start index.js",
+    "lint": "eslint ./routes --fix",
+    "prettify": "prettier --write *.js **/*.js"
   },
   "repository": "git+https://github.com/TeamCalories/Calories-Backend.git",
   "keywords": [],
@@ -23,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "elasticsearch": "^16.7.2",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "express-validator": "^6.12.1",
@@ -48,5 +51,11 @@
     "slack-node": "^0.1.8",
     "validator": "^13.6.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "prettier": "^2.3.2"
+  }
 }
