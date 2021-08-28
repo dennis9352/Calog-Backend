@@ -150,25 +150,38 @@ router.put('/:recordId',isAuth, async(req,res) => {
   }
 })
 
-router.post('/:recordId/url', isAuth, async(req, res) => {
+router.post('/:recordId/urlContents', isAuth, async(req, res) => {
   const { recordId } = req.params
-  const { url, type } = req.body
+  const { url, contents, type } = req.body
 
   const record = await Record.findById(recordId)
   try{
-  for(let i in url){
-    let typeUrl = {
-      url : url[i],
-      type : type,
+
+  if(url){
+    for(let i in url){
+      let typeUrl = {
+        url : url[i],
+        type : type,
+      }
+      record.url.push(typeUrl)
     }
-    record.url.push(typeUrl)
+  }
+
+  if(contents){
+    for(let i in contents){
+      let typeContents = {
+        contents : contents[i],
+        type : type,
+      }
+      record.contents.push(typeContents)
+    }
   }
   await record.save()
   res.sendStatus(200)
   }catch(err){
     console.log(err)
     res.status(400).send({
-      errorMessage:"사진등록에 실패했습니다"
+      errorMessage:"사진/메모 등록에 실패했습니다"
     })
   }
 })
@@ -189,29 +202,6 @@ router.delete('/:recordId/url', isAuth, async(req, res) => {
     console.log(err)
     res.status(400).send({
       errorMessage:"사진삭제에 실패했습니다"
-    })
-  }
-})
-
-router.post('/:recordId/contents', isAuth, async(req, res) => {
-  const { recordId } = req.params
-  const { contents, type } = req.body
-
-  const record = await Record.findById(recordId)
-  try{
-  for(let i in contents){
-    let typeContents = {
-      contents : contents[i],
-      type : type,
-    }
-    record.contents.push(typeContents)
-  }
-  await record.save()
-  res.sendStatus(200)
-  }catch(err){
-    console.log(err)
-    res.status(400).send({
-      errorMessage:"메모등록에 실패했습니다"
     })
   }
 })
