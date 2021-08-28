@@ -71,9 +71,9 @@ router.put('/blind', checkPermission, async(req, res) => {
     }   
     await userInfo.save()
     const userBlind = {
-        weight : userInfo.weightBlind,
-        height : userInfo.heightBlind,
-        bmr : userInfo.bmrBlind,
+        weightBlind : userInfo.weightBlind,
+        heightBlind : userInfo.heightBlind,
+        bmrBlind : userInfo.bmrBlind,
     }
     res.status(200).json(userBlind)
     }catch(err){
@@ -113,7 +113,24 @@ router.get('/detail/:date', isAuth, async(req, res) => {
     const userId = res.locals.user._id
     try{
     const record = await Record.find({ userId : userId , date : date }).populate("foodRecords").exec()
- 
+    
+    res.status(200).json({ record })
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "상세정보 불러오기에 실패했습니다"
+    })
+}
+})
+
+router.put('/detail/:date', isAuth, async(req,res) => {
+    const { date } = req.params;
+    const { url, contents } = req.body
+    const userId = res.locals.user._id
+    try{
+    const record = await Record.find({ userId : userId , date : date }).exec()
+    
     res.status(200).json({ record })
     
     }catch(err){

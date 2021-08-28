@@ -9,26 +9,13 @@ import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
-    let { date, foodList, contents, url, type } = req.body
-    url = {
-      url : url,
-      type : type
-    }
+    let { date, foodList, type } = req.body
 
-    contents = {
-      contents : contents,
-      type : type
-    }
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
     const year = date.split("-")[0]
     const month = date.split("-")[1]
     moment.tz.setDefault("Asia/Seoul");
-    
-    if(!res.locals.user){                     // 비로그인유저
-      res.send({"message" : "로그인유저가 아닙니다."})
-      return;
-    }
 
     const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
@@ -151,39 +138,30 @@ router.post('/',checkPermission, async (req,res) => {
     }
 });
 
-router.delete('/:recordId',isAuth, async(req,res) => {
+router.put('/:recordId',isAuth, async(req,res) => {
     const { recordId } = req.params
-    const { date, type } = req.body
+    const { addList, deleteList } = req.body
     const userId = res.locals.user._id
     const record = await Record.findById(recordId).populate('foodRecords').exec()
     let totalCalories = record.totalCalories
     const user = await User.findById(userId)
-    const deleteList = []
+    
     try{
-      // 해당 type 칼로리 기록 삭제와 동시에 삭제 리스트 저장
-    for(let i=record.foodRecords.length -1; i >= 0; i--){
-      if(record.foodRecords[i].type === type){
-        deleteList.push(record.foodRecords[i])
-        totalCalories -= record.foodRecords[i].resultKcal
-        record.foodRecords.splice(i,1)
+      // 해당 type 칼로리 기록 삭제
+    for(let j in deleteList){
+      for(let i=record.foodRecords.length -1; i >= 0; i--){
+        if(record.foodRecords[i]._id === deleteList[i]._id){
+          totalCalories -= record.foodRecords[i].resultKcal
+          record.foodRecords.splice(i,1)
+          await FoodRecord.delete({_id : deleteList[i]._id}).exec()
+        }
       }
-    } // 해당 type 이미지 삭제
-    for(let i=record.url.length -1; i >= 0; i--){
-      if(record.url[i].type === type){
-        record.url.splice(i,1)
-      }
-    } // 해당 type 메모 삭제
-    for(let i=record.contents.length -1; i >= 0; i--){
-      if(record.contents[i].type === type){
-        record.contents.splice(i,1)
-      }
-    }
+    } 
 
-    await FoodRecord.deleteMany({ 
-      userId: userId, 
-      date: date, 
-      type : type
-    }).exec()
+    for(let i in addList){
+    record.foodRecords.push(addList[i]._id)
+    totalCalories += addList[i].resultKcal
+    }
 
     record.totalCalories = totalCalories
     await record.save()
@@ -196,7 +174,6 @@ router.delete('/:recordId',isAuth, async(req,res) => {
         }
       }
     }
-    user.deleteList.push(deleteList)
     await user.save()
 
     res.sendStatus(200)
@@ -209,5 +186,28 @@ router.delete('/:recordId',isAuth, async(req,res) => {
   }
 })
 
+router.delete(':/recordId/url', isAuth, async(req, res) => {
+  const { recordId } = req.params
+  const { date, type } = req.body
+  const userId = res.locals.user._id
+  const record = await Record.findById(recordId)
+  // 해당 type 이미지 삭제
+  for(let i=record.url.length -1; i >= 0; i--){
+    if(record.url[i].type === type){
+      record.url.splice(i,1)
+    }
+  }
+})
+
+router.delete(':/recordId/contents', isAuth, async(req, res) => {
+   
+  
+  // 해당 type 메모 삭제
+   for(let i=record.contents.length -1; i >= 0; i--){
+    if(record.contents[i].type === type){
+      record.contents.splice(i,1)
+    }
+  }
+})
 
 export default router;
