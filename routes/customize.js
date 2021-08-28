@@ -52,8 +52,37 @@ router.get('/newFood',isAuth, async(req, res) => {
 })
 
 //자기만의 식단 CREATE
-router.post('/meal', async(req, res) => {
+router.post('/meal',isAuth, async(req, res) => {
+  const userId = res.locals.user._id
+  const { name, foodList } = req.body
+  try{
+  const newMeal = new Meal({
+    userId : userId,
+    name : name,
+    foodList: [],
+  })
 
+  for(let i in foodList){   
+    let foodSet = {
+        foodId : foodList[i].foodId,
+        name : foodList[i].name,
+        kcal: foodList[i].kcal,
+        amount : foodList[i].amount,
+        forOne : foodList[i].forOne,
+        measurement: foodList[i].measurement,
+    }
+        newMeal.foodList.push(foodSet);     
+    }
+    
+    await newMeal.save()
+
+    res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errmessage: "나만의 식단추가에 실패했습니다"
+    })
+}
 })
 
 //자기만의 식단 READ
@@ -62,23 +91,60 @@ router.get('/meal',isAuth, async(req, res) => {
     try{
     const meal = await Meal.find({ userId : userId })
 
-    res.json(newFood)
+    res.json(meal)
     }catch(err){
         console.log(err)
         res.status(400).send({
-            errmessage: "직접추가 불러오기에 실패했습니다"
+            errmessage: "나만의식단 불러오기에 실패했습니다"
         })
     }
 })
 
 //자기만의 식단 UPDATE
-router.put('/meal/:mealId', async(req, res) => {
+router.put('/meal/:mealId',isAuth, async(req, res) => {
+  const { mealId } = req.params
+  const { name, foodList } = req.body
+  try{
+    const meal = await Meal.findById( mealId ).exec();
+    meal.name = name
+    meal.foodList = []
+
+    for(let i in foodList){               
+      let foodSet = {
+          foodId : foodList[i].foodId,
+          name : foodList[i].name,
+          kcal: foodList[i].kcal,
+          amount : foodList[i].amount,
+          forOne : foodList[i].forOne,
+          measurement: foodList[i].measurement,
+      }
+          meal.foodList.push(foodSet);   
+      }
+    await meal.save()
+
+    res.sendStatus(200)
     
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "나만의 식단 수정에 실패했습니다"
+    })
+    }
 })
 
 //자기만의 식단 DELETE
 router.delete('/meal/:mealId', async(req, res) => {
-    
+  const { mealId } = req.params
+
+  try{
+    await Meal.findByIdAndDelete( mealId )
+    res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "나만의 식단 삭제에 실패했습니다"
+    })
+    }
 })
 
 

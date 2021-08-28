@@ -129,8 +129,7 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
     const { noticeId } = req.params
     const { password } = req.body
     const user = res.locals.user
-    console.log(req.body)
-    console.log(password)
+
     const adminID = process.env.ADMINID
     if(user.email !== adminID){
         res.status(400).send({

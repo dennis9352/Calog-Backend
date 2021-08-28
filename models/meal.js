@@ -5,12 +5,12 @@ export const mealSchema = new mongoose.Schema({
     userId: {
       type: String,
     },    
-    foodId: {
-      type: Array,
-    },
     name: {
       type: String,
-    }
+    },
+    foodList: {
+      type: Array,
+    },
 });
 mealSchema.virtual("mealId").get(function () {
   return this._id.toHexString();
