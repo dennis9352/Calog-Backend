@@ -35,7 +35,7 @@ deploy:
     region: ap-northeast-2
     wait-until-deployed: true
     on:
-      repo: dennis9352/Calog
+      repo: dennis9352/Calog-Backend
       branch: main
 notifications:
   email:

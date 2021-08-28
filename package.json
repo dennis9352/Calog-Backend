@@ -46,7 +46,8 @@
     "passport-naver-v2": "^2.0.8",
     "request": "^2.88.2",
     "slack-node": "^0.1.8",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "yarn": "^1.22.11"
   },
   "type": "module"
 }
