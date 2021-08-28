@@ -22,7 +22,7 @@ deploy:
     local_dir: deploy 
     wait-until-deployed: true
     on:
-      repo: TeamCalog/Calog-Backend 
+      repo: dennis9352/Calog-Backend
       branch: main
   - provider: codedeploy 
     access_key_id: $AWS_ACCESS_KEY 
@@ -35,7 +35,7 @@ deploy:
     region: ap-northeast-2
     wait-until-deployed: true
     on:
-      repo: TeamCalog/Calog-Backend
+      repo: dennis9352/Calog
       branch: main
 notifications:
   email:
