@@ -1,0 +1,43 @@
+language: node_js
+node_js:
+  - "14.17"
+before_install:
+  - npm install -g yarn
+branches:
+  only:
+    - main
+before_deploy: 
+  - rm -rf node_modules
+  - rm -rf yarn.lock
+  - zip -r Calories-Backend * 
+  - mkdir -p deploy 
+  - mv Calories-Backend.zip deploy/Calories-Backend.zip
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY 
+    secret_access_key: $AWS_SECRET_KEY 
+    bucket: calories-cd 
+    region: ap-northeast-2
+    skip_cleanup: true 
+    local_dir: deploy 
+    wait-until-deployed: true
+    on:
+      repo: TeamCalog/Calog-Backend 
+      branch: main
+  - provider: codedeploy 
+    access_key_id: $AWS_ACCESS_KEY 
+    secret_access_key: $AWS_SECRET_KEY 
+    bucket: calories-cd 
+    key: Calories-Backend.zip 
+    bundle_type: zip 
+    application: calories-backend-cicd-codedeploy-service
+    deployment_group: cicd-deploy-group 
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      repo: TeamCalog/Calog-Backend
+      branch: main
+notifications:
+  email:
+    recipients:
+      - dennis9352@gmail.com
