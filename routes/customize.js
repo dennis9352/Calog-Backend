@@ -7,40 +7,16 @@ const router = express.Router();
 
 //직접추가
 router.post('/newFood',isAuth, async(req, res) => {
-    let {name, kcal, carbo, protein, fat, sugars, fattyAcid, transFattyAcid, unFattyAcid, cholesterol, natrium} = req.body
+    let {name, kcal, forOne, measurement, carbo, protein, fat, sugars, fattyAcid, transFattyAcid, unFattyAcid, cholesterol, natrium} = req.body
     const userId = res.locals.user._id
-    if (!protein){
-        protein = "-"
-      }
-      if (!fat){
-        fat = "-"
-      }
-      if (!carbo){
-        carbo = "-"
-      }
-      if (!sugars){
-        sugars = "-"
-      }
-      if (!natrium){
-        natrium = "-"
-      }
-      if (!cholesterol){
-        cholesterol = "-"
-      }
-      if (!transFattyAcid){
-        transFattyAcid = "-"
-      }
-      if (!fattyAcid){
-        fattyAcid = "-"
-      }
-      if (!unFattyAcid){
-        unFattyAcid = "-"
-      }
+    
     try{
-    const newFood = await NewFood.create({
+    await NewFood.create({
         userId : userId,
         name : name, 
         kcal : kcal,
+        forOne: forOne,
+        measurement: measurement,
         carbo : carbo,
         protein : protein,
         fat : fat,
@@ -75,18 +51,6 @@ router.get('/newFood',isAuth, async(req, res) => {
     }
 })
 
-router.get('/newFood/:newFoodId',isAuth, async(req, res) => {
-    try{
-    const newFood = await NewFood.find({ userId : userId })
-
-    res.json(newFood)
-    }catch(err){
-        console.log(err)
-        res.status(400).send({
-            errmessage: "직접추가 불러오기에 실패했습니다"
-        })
-    }
-})
 //자기만의 식단 CREATE
 router.post('/meal', async(req, res) => {
 

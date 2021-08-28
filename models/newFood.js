@@ -11,6 +11,14 @@ export const newFoodSchema = new mongoose.Schema({
     kcal: {
       type: String,
     },
+    forOne: {
+        type: String,
+        default: "0",
+    },
+    measurement: {
+        type: String,
+        default: "g",
+    },
     protein:{
         type: String,
         default: "-",
