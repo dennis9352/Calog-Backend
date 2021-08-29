@@ -6,6 +6,7 @@ import Feedback from "../models/feedback.js";
 import Slack from "slack-node"
 import moment from "moment"
 import "moment-timezone"
+import { checkPermission } from "../middlewares/checkPermission.js";
 dotenv.config()
 const router = express.Router();
 
@@ -14,7 +15,7 @@ slack.setWebhook(process.env.SLACKWEBHOOK)
 const send = async (feedbackInfo) => {
         slack.webhook(
         {
-            text: `--------피드백알림--------\n닉네임: ${feedbackInfo.nickname}\n제목: ${feedbackInfo.title}\n내용: ${feedbackInfo.contents}\n전화번호: ${feedbackInfo.phoneNum}\n인스타그램: ${feedbackInfo.instagramId}\n날짜: ${feedbackInfo.date}`,
+            text: `--------피드백알림--------\n닉네임: ${feedbackInfo.nickname}\n제목: ${feedbackInfo.title}\n내용: ${feedbackInfo.contents}\n전화번호: ${feedbackInfo.phoneNum}\n인스타그램: ${feedbackInfo.instagramId}\n날짜: ${feedbackInfo.date}\n사진: ${feedbackInfo.url}`,
             channel: "#feedbacks",
             username: "FeedbackBot",
             icon_emoji: "slack",
@@ -143,8 +144,7 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
     const { noticeId } = req.params
     const { password } = req.body
     const user = res.locals.user
-    console.log(req.body)
-    console.log(password)
+
     const adminID = process.env.ADMINID
     if(user.email !== adminID){
         res.status(400).send({
@@ -171,17 +171,14 @@ router.delete('/:noticeId',isAuth, async(req, res) => {      //공지사항 삭�
     }
 })
 
-router.post('/feedback',isAuth, async(req,res) => {
+router.post('/feedback',checkPermission, async(req,res) => {
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD HH:mm:ss")
-    const userId = res.locals.user._id
-    const nickname = res.locals.user.nickname
-    const { title, contents, date ,phoneNum, instagramId} = req.body
+    
+    let { title, contents, date , phoneNum, instagramId, url} = req.body
     try{
     
     const feedback = await Feedback.create({
-        userId : userId,
-        nickname : nickname,
         title : title,
         contents : contents,
         date : date,
@@ -189,12 +186,33 @@ router.post('/feedback',isAuth, async(req,res) => {
 
     if(phoneNum !== undefined){
         feedback.phoneNum = phoneNum
+    }else{
+        phoneNum = '-'
     }
+
     if(instagramId !== undefined){
         feedback.instagramId = instagramId
+    }else{
+        instagramId = '-'
     }
-    
+
+    if(url !== undefined){
+        feedback.url = url
+    }else{
+        url = '-'
+    }
+
+    const user = res.locals.user
+    let nickname = ''
+    if(user){
+        feedback.userId = user._id
+        nickname = user.nickname
+    }else{
+        nickname = "비로그인유저"
+    }
+
     await feedback.save()
+
     const feedbackInfo = {
         nickname: nickname,
         title: title,
@@ -202,6 +220,7 @@ router.post('/feedback',isAuth, async(req,res) => {
         phoneNum: phoneNum,
         instagramId: instagramId,
         date: todayDate,
+        url: url,
     }
     await send(feedbackInfo)
     

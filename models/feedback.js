@@ -10,9 +10,11 @@ export const feedbackSchema = new mongoose.Schema({
     },
     userId: {
         type: String,
+        default: "비로그인",
     },
     nickname: {
         type: String,
+        default: "비로그인",
     },
     date: {
         type: String,
@@ -22,6 +24,10 @@ export const feedbackSchema = new mongoose.Schema({
         default: "n/a",
     },
     instagramId: {
+        type: String,
+        default: "n/a",
+    },
+    url: {
         type: String,
         default: "n/a",
     },

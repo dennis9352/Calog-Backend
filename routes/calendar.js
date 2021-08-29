@@ -25,13 +25,6 @@ router.get('/exercise',checkPermission, async(req, res) => {
 })
 
 router.get('/dash',checkPermission, async(req, res) => {
-    const user = res.locals.user
-    
-    if(!user){
-        return res.status(200).send({
-            message: "로그인유저가 아닙니다."
-        })
-    }
     const userId = res.locals.user._id
     const newdate = moment()
     const todayDate = newdate.format('YYYY-MM-DD')
@@ -77,7 +70,12 @@ router.put('/blind', checkPermission, async(req, res) => {
         userInfo.bmrBlind = bmrBlind
     }   
     await userInfo.save()
-    res.sendStatus(200)
+    const userBlind = {
+        weightBlind : userInfo.weightBlind,
+        heightBlind : userInfo.heightBlind,
+        bmrBlind : userInfo.bmrBlind,
+    }
+    res.status(200).json(userBlind)
     }catch(err){
         console.log(err)
         res.status(400).send({
@@ -115,7 +113,24 @@ router.get('/detail/:date', isAuth, async(req, res) => {
     const userId = res.locals.user._id
     try{
     const record = await Record.find({ userId : userId , date : date }).populate("foodRecords").exec()
- 
+    
+    res.status(200).json({ record })
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "상세정보 불러오기에 실패했습니다"
+    })
+}
+})
+
+router.put('/detail/:date', isAuth, async(req,res) => {
+    const { date } = req.params;
+    const { url, contents } = req.body
+    const userId = res.locals.user._id
+    try{
+    const record = await Record.find({ userId : userId , date : date }).exec()
+    
     res.status(200).json({ record })
     
     }catch(err){

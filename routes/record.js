@@ -9,26 +9,13 @@ import { isAuth } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.post('/',checkPermission, async (req,res) => {
-    let { date, foodList, contents, url, type } = req.body
-    url = {
-      url : url,
-      type : type
-    }
+    let { date, foodList, type } = req.body
 
-    contents = {
-      contents : contents,
-      type : type
-    }
     const newdate = moment()
     const todayDate = newdate.format("YYYY-MM-DD")
     const year = date.split("-")[0]
     const month = date.split("-")[1]
     moment.tz.setDefault("Asia/Seoul");
-    
-    if(!res.locals.user){                     // 비로그인유저
-      res.send({"message" : "로그인유저가 아닙니다."})
-      return;
-    }
 
     const userId = res.locals.user._id
     const user = await User.findById(userId).exec()
@@ -55,45 +42,29 @@ router.post('/',checkPermission, async (req,res) => {
             month : month,
             bmr: bmr,
           })
-          if (url.url !== ""){              // 이미지가 빈값이 아니라면 추가
-            newRecord.url = url
-          }
-          if (contents.contents !== ""){    // 메모가 빈값이 아니라면 추가
-            newRecord.contents = contents
-          }
 
           for(let i in foodList){               //먹은 음식 하나씩 저장
-              let foodId = foodList[i].foodId
-              let name = foodList[i].name
-              let amount = foodList[i].amount
-              let kcal = foodList[i].kcal
-              let resultKcal = Math.round(kcal * amount)
-
-              let foodRecord = await FoodRecord.create({
-                  foodId : foodId,
-                  name : name,
-                  kcal : kcal,
-                  amount : amount,
-                  resultKcal : resultKcal,
-                  type: type,
-                  date: date,
-                  userId: userId
-              })
+            let resultKcal = Math.round(foodList[i].kcal * foodList[i].amount)
+          
+            let foodRecord = await FoodRecord.create({
+                foodId : foodList[i].foodId,
+                name : foodList[i].name,
+                kcal: foodList[i].kcal,
+                amount : foodList[i].amount,
+                resultKcal : resultKcal,
+                forOne : foodList[i].forOne,
+                measurement: foodList[i].measurement,
+                type: type,
+                date: date,
+                userId: userId
+            })
                 newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
-                newRecord.totalCalories =+ resultKcal
+                newRecord.totalCalories += resultKcal
 
             }
             
-            await newRecord.save(async function () {
-              try {
-                user.records.push(newRecord._id);   //해당 유저에 기록 저장
-                user.deleteList = []
-                await user.save()
-              } catch (err) {
-                console.log(err);
-              }
-            });
-            
+            await newRecord.save()
+
             res.sendStatus(200)
       }else{              // 해당 날짜 하루 칼로리 기록이 이미 있을때 (추가)
         
@@ -102,18 +73,16 @@ router.post('/',checkPermission, async (req,res) => {
         }
         
         for(let i in foodList){
-          let foodId = foodList[i].foodId
-          let name = foodList[i].name
-          let amount = foodList[i].amount
-          let kcal = foodList[i].kcal
-          let resultKcal = Math.round(kcal * amount)
+          let resultKcal = Math.round(foodList[i].kcal * foodList[i].amount)
           
           let foodRecord = await FoodRecord.create({
-              foodId : foodId,
-              name : name,
-              kcal: kcal,
-              amount : amount,
+              foodId : foodList[i].foodId,
+              name : foodList[i].name,
+              kcal: foodList[i].kcal,
+              amount : foodList[i].amount,
               resultKcal : resultKcal,
+              forOne : foodList[i].forOne,
+              measurement: foodList[i].measurement,
               type: type,
               date: date,
               userId: userId
@@ -121,18 +90,9 @@ router.post('/',checkPermission, async (req,res) => {
             record.foodRecords.push(foodRecord._id);
             record.totalCalories += resultKcal
         }
-        if(url.url !== ""){             // 이미지 array push
-          record.url.push(url)
-        }
-        
-        if(contents.contents !== ""){    // 메모 push
-          record.contents.push(contents)
-        }
 
         await record.save()
-        
-        user.deleteList = []
-        await user.save()
+
         res.sendStatus(200)
     } 
     }catch(err){
@@ -143,63 +103,170 @@ router.post('/',checkPermission, async (req,res) => {
     }
 });
 
-router.delete('/:recordId',isAuth, async(req,res) => {
+router.put('/:recordId',isAuth, async(req,res) => {
     const { recordId } = req.params
-    const { date, type } = req.body
+    const { foodList, type, date, typeCalories } = req.body
     const userId = res.locals.user._id
-    const record = await Record.findById(recordId).populate('foodRecords').exec()
-    let totalCalories = record.totalCalories
-    const user = await User.findById(userId)
-    const deleteList = []
+    const record = await Record.findById(recordId).exec()
+    
     try{
-      // 해당 type 칼로리 기록 삭제와 동시에 삭제 리스트 저장
-    for(let i=record.foodRecords.length -1; i >= 0; i--){
-      if(record.foodRecords[i].type === type){
-        deleteList.push(record.foodRecords[i])
-        totalCalories -= record.foodRecords[i].resultKcal
-        record.foodRecords.splice(i,1)
+      record.totalCalories -= typeCalories
+      record.foodRecords = []
+      // 해당 type 칼로리 기록 업데이트
+      for(let i in foodList){
+        let resultKcal = Math.round(foodList[i].kcal * foodList[i].amount)
+        let foodRecord = await FoodRecord.create({
+              foodId : foodList[i].foodId,
+              name : foodList[i].name,
+              kcal: foodList[i].kcal,
+              amount : foodList[i].amount,
+              resultKcal : foodList[i].resultKcal,
+              forOne : foodList[i].forOne,
+              measurement: foodList[i].measurement,
+              type: type,
+              date: date,
+              userId: userId
+        })
+          record.foodRecords.push(foodRecord._id);
+          record.totalCalories += resultKcal
       }
-    } // 해당 type 이미지 삭제
-    for(let i=record.url.length -1; i >= 0; i--){
-      if(record.url[i].type === type){
-        record.url.splice(i,1)
-      }
-    } // 해당 type 메모 삭제
-    for(let i=record.contents.length -1; i >= 0; i--){
-      if(record.contents[i].type === type){
-        record.contents.splice(i,1)
-      }
-    }
 
-    await FoodRecord.deleteMany({ 
-      userId: userId, 
-      date: date, 
-      type : type
-    }).exec()
-
-    record.totalCalories = totalCalories
     await record.save()
+
     //만약 기록에 칼로리 기록이 없다면 삭제
     if (!record.foodRecords.length){
       await Record.findByIdAndDelete(recordId)
-      for(let i in user.records){
-        if(user.records[i] == recordId){
-          user.records.splice(i,1)
-        }
-      }
     }
-    user.deleteList.push(deleteList)
-    await user.save()
 
     res.sendStatus(200)
 
   }catch(err){
     console.log(err)
     res.status(400).send({
-      errorMessage: "기록 삭제에 실패했습니다"
+      errorMessage: "식단 수정에 실패했습니다"
     })
   }
 })
 
+router.post('/:recordId/urlContents', isAuth, async(req, res) => {
+  const { recordId } = req.params
+  const { url, contents, type } = req.body
+
+  const record = await Record.findById(recordId)
+  try{
+  
+  if(url !== undefined){
+    for(let i in url){
+      let typeUrl = {
+        url : url[i],
+        type : type,
+      }
+      record.url.push(typeUrl)
+    }
+  }
+
+  if(contents !== undefined){
+    for(let i in contents){
+      let typeContents = {
+        contents : contents[i],
+        type : type,
+      }
+      record.contents.push(typeContents)
+    }
+  }
+  await record.save()
+  res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage:"사진/메모 등록에 실패했습니다"
+    })
+  }
+})
+
+router.delete('/:recordId/url', isAuth, async(req, res) => {
+  const { recordId } = req.params
+  const { type } = req.body
+  const record = await Record.findById(recordId)
+  try{
+  for(let i=record.url.length -1; i >= 0; i--){
+    if(record.url[i].type === type){
+      record.url.splice(i,1)
+    }
+  }
+  await record.save()
+  res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage:"사진삭제에 실패했습니다"
+    })
+  }
+})
+
+router.delete('/:recordId/contents', isAuth, async(req, res) => {
+  const { recordId } = req.params
+  const { type } = req.body
+  const record = await Record.findById(recordId)
+  try{
+  for(let i=record.contents.length -1; i >= 0; i--){
+    if(record.contents[i].type === type){
+      record.contents.splice(i,1)
+    }
+  }
+  await record.save()
+  res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage:"메모삭제에 실패했습니다"
+    })
+  }
+})
+
+router.delete('/:recordId',isAuth, async(req,res) => {
+  const { recordId } = req.params
+  const { date, type } = req.body
+  const userId = res.locals.user._id
+  const record = await Record.findById(recordId).populate('foodRecords').exec()
+  let totalCalories = record.totalCalories
+
+  try{
+    // 해당 type 칼로리 기록 삭제
+  for(let i=record.foodRecords.length -1; i >= 0; i--){
+    if(record.foodRecords[i].type === type){
+      totalCalories -= record.foodRecords[i].resultKcal
+      record.foodRecords.splice(i,1)
+    }
+  } // 해당 type 이미지 삭제
+  for(let i=record.url.length -1; i >= 0; i--){
+    if(record.url[i].type === type){
+      record.url.splice(i,1)
+    }
+  } // 해당 type 메모 삭제
+  for(let i=record.contents.length -1; i >= 0; i--){
+    if(record.contents[i].type === type){
+      record.contents.splice(i,1)
+    }
+  }
+
+  await FoodRecord.deleteMany({ 
+    userId: userId, 
+    date: date, 
+    type : type
+  }).exec()
+
+  record.totalCalories = totalCalories
+  await record.save()
+
+  res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage:"전체삭제에 실패했습니다"
+    })
+  }
+
+})
 
 export default router;

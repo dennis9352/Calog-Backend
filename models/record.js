@@ -34,6 +34,7 @@ export const recordSchema = new mongoose.Schema({
     },
     totalCalories:{
         type: Number,
+        default: 0,
     }
 });
 recordSchema.virtual("recordId").get(function () {
