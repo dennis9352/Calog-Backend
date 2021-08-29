@@ -11,7 +11,7 @@ router.post('/newFood',isAuth, async(req, res) => {
     const userId = res.locals.user._id
     
     try{
-    await NewFood.create({
+    const newFood = await NewFood.create({
         userId : userId,
         name : name, 
         kcal : kcal,
@@ -28,7 +28,7 @@ router.post('/newFood',isAuth, async(req, res) => {
         natrium : natrium,
      })
     
-    res.sendStatus(200)
+    res.status(200).json(newFood._id)
     }catch(err){
         console.log(err)
         res.status(400).send({
