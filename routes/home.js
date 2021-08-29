@@ -218,7 +218,6 @@ router.post('/recentKey', isAuth, async(req, res) =>{
       }
       
     }
-    console.log(recentKey.keyword)
     
     res.sendStatus(200);
     
@@ -303,4 +302,37 @@ router.get('/recommend', async(req, res) => {
   }
   
   
+})
+
+//데이터 추가 API
+
+router.post('/addData', async(req, res) => {
+  try{
+  let {name, forOne, kcal, measurement, protein, fat, carbo, sugars, natrium, cholesterol, fattyAcid, transFattyAcid, unFattyAcid  } = req.body;
+  
+  await Food.create({
+    name:name,
+    forOne:forOne,
+    kcal: kcal,
+    measurement:measurement,
+    protein:protein,
+    fat:fat,
+    carbo:carbo,
+    sugars:sugars,
+    natrium:natrium,
+    cholesterol:cholesterol,
+    fattyAcid:fattyAcid,
+    transFattyAcid:transFattyAcid,
+    unFattyAcid:unFattyAcid
+  })
+
+  res.sendStatus(200);
+  
+  }catch(err){
+    console.log(err) 
+    res.status(400).send({
+      "errorMessage": "데이터 추가중 에러발생"
+    })
+    return;
+  }
 })
