@@ -59,7 +59,7 @@ router.post('/',checkPermission, async (req,res) => {
                 userId: userId
             })
                 newRecord.foodRecords.push(foodRecord._id);     //먹은 음식들 기록에 저장
-                newRecord.totalCalories =+ resultKcal
+                newRecord.totalCalories += resultKcal
 
             }
             
@@ -108,7 +108,6 @@ router.put('/:recordId',isAuth, async(req,res) => {
     const { foodList, type, date, typeCalories } = req.body
     const userId = res.locals.user._id
     const record = await Record.findById(recordId).exec()
-    const user = await User.findById(userId)
     
     try{
       record.totalCalories -= typeCalories
@@ -138,7 +137,6 @@ router.put('/:recordId',isAuth, async(req,res) => {
     if (!record.foodRecords.length){
       await Record.findByIdAndDelete(recordId)
     }
-    await user.save()
 
     res.sendStatus(200)
 
@@ -156,8 +154,8 @@ router.post('/:recordId/urlContents', isAuth, async(req, res) => {
 
   const record = await Record.findById(recordId)
   try{
-
-  if(url){
+  
+  if(url !== undefined){
     for(let i in url){
       let typeUrl = {
         url : url[i],
@@ -167,7 +165,7 @@ router.post('/:recordId/urlContents', isAuth, async(req, res) => {
     }
   }
 
-  if(contents){
+  if(contents !== undefined){
     for(let i in contents){
       let typeContents = {
         contents : contents[i],
@@ -224,6 +222,51 @@ router.delete('/:recordId/contents', isAuth, async(req, res) => {
       errorMessage:"메모삭제에 실패했습니다"
     })
   }
+})
+
+router.delete('/:recordId',isAuth, async(req,res) => {
+  const { recordId } = req.params
+  const { date, type } = req.body
+  const userId = res.locals.user._id
+  const record = await Record.findById(recordId).populate('foodRecords').exec()
+  let totalCalories = record.totalCalories
+
+  try{
+    // 해당 type 칼로리 기록 삭제
+  for(let i=record.foodRecords.length -1; i >= 0; i--){
+    if(record.foodRecords[i].type === type){
+      totalCalories -= record.foodRecords[i].resultKcal
+      record.foodRecords.splice(i,1)
+    }
+  } // 해당 type 이미지 삭제
+  for(let i=record.url.length -1; i >= 0; i--){
+    if(record.url[i].type === type){
+      record.url.splice(i,1)
+    }
+  } // 해당 type 메모 삭제
+  for(let i=record.contents.length -1; i >= 0; i--){
+    if(record.contents[i].type === type){
+      record.contents.splice(i,1)
+    }
+  }
+
+  await FoodRecord.deleteMany({ 
+    userId: userId, 
+    date: date, 
+    type : type
+  }).exec()
+
+  record.totalCalories = totalCalories
+  await record.save()
+
+  res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+      errorMessage:"전체삭제에 실패했습니다"
+    })
+  }
+
 })
 
 export default router;
