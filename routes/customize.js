@@ -5,7 +5,7 @@ import NewFood from "../models/newFood.js";
 
 const router = express.Router();
 
-//직접추가
+//직접추가 CREATE
 router.post('/newFood',isAuth, async(req, res) => {
     let {name, kcal, forOne, measurement, carbo, protein, fat, sugars, fattyAcid, transFattyAcid, unFattyAcid, cholesterol, natrium} = req.body
     const userId = res.locals.user._id
@@ -36,7 +36,7 @@ router.post('/newFood',isAuth, async(req, res) => {
         })
     }
 })
-
+//직접추가 READ
 router.get('/newFood',isAuth, async(req, res) => {
     const userId = res.locals.user._id
     try{
@@ -51,6 +51,21 @@ router.get('/newFood',isAuth, async(req, res) => {
     }
 })
 
+//직접추가 DELETE
+router.delete('/newFood/:newFoodId',isAuth, async(req, res) => {
+  const { newFoodId } = req.params
+  
+  try{
+    await NewFood.findByIdAndDelete( newFoodId )
+    res.sendStatus(200)
+
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "직접추가 삭제에 실패했습니다"
+    })
+  }
+})
 //자기만의 식단 CREATE
 router.post('/meal',isAuth, async(req, res) => {
   const userId = res.locals.user._id

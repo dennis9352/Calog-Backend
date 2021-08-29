@@ -57,4 +57,11 @@ export const newFoodSchema = new mongoose.Schema({
     }
 });
 
+newFoodSchema.virtual("mealId").get(function () {
+    return this._id.toHexString();
+});
+newFoodSchema.set("toJSON", {
+    virtuals: true,
+  });
+
 export default conn.model('NewFood', newFoodSchema)
