@@ -27,6 +27,21 @@ const send = async (feedbackInfo) => {
             }
         })
 };
+const sendFood = async (feedbackInfo) => {
+    slack.webhook(
+    {
+        text: `--------음식추가요청--------\n닉네임: ${feedbackInfo.nickname}\n제목: ${feedbackInfo.title}\n내용: ${feedbackInfo.contents}\n날짜: ${feedbackInfo.date}`,
+        channel: "#foodfeedbacks",
+        username: "FeedbackBot",
+        icon_emoji: "slack",
+    },
+    (error, response) => {
+        if (error) {
+            console.log(error);
+            return;
+        }
+    })
+};
 
 
 router.post('/', isAuth, async(req, res) => {               // 공지사항 쓰기
@@ -240,11 +255,9 @@ router.post('/feedbackFood',isAuth, async(req,res) => {
         nickname: nickname,
         title: title,
         contents: contents,
-        phoneNum: "-",
-        instagramId: "-",
         date: todayDate,
     }
-    await send(feedbackInfo)
+    await sendFood(feedbackInfo)
 
     res.sendStatus(200)
     }catch(err){
