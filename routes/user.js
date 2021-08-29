@@ -159,6 +159,25 @@ router.post('/register',validateRegister, async (req, res) => {
    
   });
 
+   //닉네임 수정
+   router.post('/update-nickname',isAuth, async (req, res) => {
+    try{
+     console.log(req.body.nickname)
+     const {user} = res.locals
+     const userId = user._id
+     const modified_nickname = req.body.nickname
+     const target = await User.findOne({_id:userId})
+     target.nickname = modified_nickname
+     target.save()
+     res.status(200).json({result:"success"})
+ 
+    }catch(err){
+      console.log(err)
+      res.status(400).json({errorMessage:"닉네임 수정에 실패하였습니다"})
+    }
+    
+   });
+ 
 
 //바디스펙 기록
 router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
