@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-const URI = process.env.ATLASURI;
-export const conn2 = mongoose.createConnection(
+const URI = process.env.ATLASURI; //dot env를 이용하여 URI(mongo DB atlas에서 받아온 SRV) 값을 감춤.
+export const conn2 = mongoose.createConnection( //createConnection에서 URI를 받고 변수 conn2에 할당함.
   URI,
   {
-    dbName: "atlas",
+    dbName: "atlas",//atlas DB와 연결
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
