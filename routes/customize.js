@@ -165,6 +165,21 @@ router.put("/meal/:mealId", isAuth, async (req, res) => {
   }
 });
 
+//자기만의 식단 DELETE
+router.delete('/meal/:mealId', async(req, res) => {
+  const { mealId } = req.params
+
+  try{
+    await Meal.findByIdAndDelete( mealId )
+    res.sendStatus(200)
+  }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "나만의 식단 삭제에 실패했습니다"
+    })
+    }
+})
+
 //업데이트 이후 부족한 데이터 채워넣어주기
 router.put('/fixData', async(req,res) => {
   const foodRecords = await FoodRecord.find({})
