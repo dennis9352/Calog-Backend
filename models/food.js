@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { conn2 } from "./indexAtlas.js";
+import { conn2 } from "./indexAtlas.js"; //food만 atlas db를 쓰기 때문에 conn2(indexAtlas.js)를 import함.
 
 export const foodSchema = new mongoose.Schema({
   name: {
