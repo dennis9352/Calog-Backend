@@ -177,7 +177,7 @@ router.get("/search/detail/:foodId", async (req, res) => {
   
 })
 
-export default router;
+
 
 
 //최근 검색어 등록 API
@@ -194,7 +194,7 @@ router.post('/recentKey', isAuth, async(req, res) =>{
       if(recentKey.keyword.length <10){  //배열이 10개 미만일때
         if(recentKey.keyword.includes(keyword)){ //키워드가 이미 리스트에 존재할때
           recentKey.keyword.remove(keyword)
-          recentKey.keyword.push(keyword)
+          recentKey.keyword.push(keyword) 
           recentKey.save()
         }else{ //키워드가 리스트에 존재하지 않을때
           recentKey.keyword.push(keyword)
@@ -204,7 +204,7 @@ router.post('/recentKey', isAuth, async(req, res) =>{
       }else{  // 배열이 10개 이상일때
         if(recentKey.keyword.includes(keyword)){//키워드가 이미 리스트에 존재할때
           recentKey.keyword.remove(keyword)
-          const lastKey = recentKey.keyword[0]
+          const lastKey = recentKey.keyword[0]   
           recentKey.keyword.remove(lastKey)
           recentKey.keyword.push(keyword)
           recentKey.save()
@@ -336,3 +336,5 @@ router.post('/addData', async(req, res) => {
     return;
   }
 })
+
+export default router;

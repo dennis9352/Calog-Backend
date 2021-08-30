@@ -170,17 +170,17 @@ router.post('/bodySpec', isAuth, async(req, res) => { //isAuth
   
   const targetUser = await User.findOne({_id:userId})
   
+  targetUser.gender = gender;
+  targetUser.weight = Number(weight);
+  targetUser.height = Number(height);
+  targetUser.age = Number(age);
+
   const date = new Date()
   const ryear = date.getFullYear();
   const rmonth = date.getMonth() + 1;
   const rdate = date.getDate();
 
   const registerDate = `${ryear}-${rmonth >= 10 ? rmonth : '0' + rmonth}-${rdate >= 10 ? rdate : '0' + rdate}`;
-  
-  targetUser.gender = gender;
-  targetUser.weight = Number(weight);
-  targetUser.height = Number(height);
-  targetUser.age = Number(age);
 
   if(gender === '남자'){
     const bmr = 66.47 + ( 13.75 * weight + (5 * height) - (6.76 * age))
