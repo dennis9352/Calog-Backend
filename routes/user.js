@@ -160,9 +160,8 @@ router.post('/register',validateRegister, async (req, res) => {
   });
 
    //닉네임 수정
-   router.post('/update-nickname',isAuth, async (req, res) => {
+   router.put('/update-nickname',isAuth, async (req, res) => {
     try{
-     console.log(req.body.nickname)
      const {user} = res.locals
      const userId = user._id
      const modified_nickname = req.body.nickname

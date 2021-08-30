@@ -1,7 +1,10 @@
 import express from "express";
 import { isAuth } from "../middlewares/auth.js";
+import Food from "../models/food.js";
+import FoodRecord from "../models/foodRecord.js";
 import Meal from "../models/meal.js";
 import NewFood from "../models/newFood.js";
+import Users from "../models/users.js";
 
 const router = express.Router();
 
@@ -162,5 +165,26 @@ router.delete('/meal/:mealId', async(req, res) => {
     }
 })
 
+router.put('/addMetaData', async(req,res) => {
+  const foodRecords = await FoodRecord.find({})
+  try{
+  for(let i in foodRecords){
+    if(!foodRecords[i].forOne){
+      let oriFood = await Food.findById(foodRecords[i].foodId).exec()
+      if(oriFood){
+      foodRecords[i].forOne = oriFood.forOne
+      foodRecords[i].measurement = oriFood.measurement
+      foodRecords[i].save()
+      }
+    }
+  }
+  const records = Record.find({}).exec()
+  
+
+  res.sendStatus(200)
+}catch(err){
+  console.log(err)
+}
+})
 
 export default router;
