@@ -12,7 +12,7 @@ export const newFoodSchema = new mongoose.Schema({
     type: String,
   },
   forOne: {
-    type: String,
+    type: Number,
     default: "0",
   },
   measurement: {
