@@ -6,161 +6,172 @@ import NewFood from "../models/newFood.js";
 const router = express.Router();
 
 //직접추가 CREATE
-router.post('/newFood',isAuth, async(req, res) => {
-    let {name, kcal, forOne, measurement, carbo, protein, fat, sugars, fattyAcid, transFattyAcid, unFattyAcid, cholesterol, natrium} = req.body
-    const userId = res.locals.user._id
-    
-    try{
-    const newFood = await NewFood.create({
-        userId : userId,
-        name : name, 
-        kcal : kcal,
-        forOne: forOne,
-        measurement: measurement,
-        carbo : carbo,
-        protein : protein,
-        fat : fat,
-        sugars: sugars,
-        fattyAcid : fattyAcid,
-        transFattyAcid: transFattyAcid,
-        unFattyAcid : unFattyAcid,
-        cholesterol : cholesterol,
-        natrium : natrium,
-     })
-    
-    res.status(200).json(newFood._id)
-    }catch(err){
-        console.log(err)
-        res.status(400).send({
-            errorMessage: "직접추가에 실패했습니다"
-        })
-    }
-})
-//직접추가 READ
-router.get('/newFood',isAuth, async(req, res) => {
-    const userId = res.locals.user._id
-    try{
-    const newFood = await NewFood.find({ userId : userId })
+router.post("/newFood", isAuth, async (req, res) => {
+  let {
+    name,
+    kcal,
+    forOne,
+    measurement,
+    carbo,
+    protein,
+    fat,
+    sugars,
+    fattyAcid,
+    transFattyAcid,
+    unFattyAcid,
+    cholesterol,
+    natrium,
+  } = req.body;
+  const userId = res.locals.user._id;
 
-    res.json(newFood)
-    }catch(err){
-        console.log(err)
-        res.status(400).send({
-            errmessage: "직접추가 불러오기에 실패했습니다"
-        })
-    }
-})
+  try {
+    const newFood = await NewFood.create({
+      userId: userId,
+      name: name,
+      kcal: kcal,
+      forOne: forOne,
+      measurement: measurement,
+      carbo: carbo,
+      protein: protein,
+      fat: fat,
+      sugars: sugars,
+      fattyAcid: fattyAcid,
+      transFattyAcid: transFattyAcid,
+      unFattyAcid: unFattyAcid,
+      cholesterol: cholesterol,
+      natrium: natrium,
+    });
+
+    res.status(200).json(newFood._id);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      errorMessage: "직접추가에 실패했습니다",
+    });
+  }
+});
+//직접추가 READ
+router.get("/newFood", isAuth, async (req, res) => {
+  const userId = res.locals.user._id;
+  try {
+    const newFood = await NewFood.find({ userId: userId });
+
+    res.json(newFood);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      errmessage: "직접추가 불러오기에 실패했습니다",
+    });
+  }
+});
 
 //직접추가 DELETE
-router.delete('/newFood/:newFoodId',isAuth, async(req, res) => {
-  const { newFoodId } = req.params
-  
-  try{
-    await NewFood.findByIdAndDelete( newFoodId )
-    res.sendStatus(200)
+router.delete("/newFood/:newFoodId", isAuth, async (req, res) => {
+  const { newFoodId } = req.params;
 
-  }catch(err){
-    console.log(err)
+  try {
+    await NewFood.findByIdAndDelete(newFoodId);
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     res.status(400).send({
-        errorMessage: "직접추가 삭제에 실패했습니다"
-    })
+      errorMessage: "직접추가 삭제에 실패했습니다",
+    });
   }
-})
+});
 //자기만의 식단 CREATE
-router.post('/meal',isAuth, async(req, res) => {
-  const userId = res.locals.user._id
-  const { name, foodList } = req.body
-  try{
-  const newMeal = new Meal({
-    userId : userId,
-    name : name,
-    foodList: [],
-  })
+router.post("/meal", isAuth, async (req, res) => {
+  const userId = res.locals.user._id;
+  const { name, foodList } = req.body;
+  try {
+    const newMeal = new Meal({
+      userId: userId,
+      name: name,
+      foodList: [],
+    });
 
-  for(let i in foodList){   
-    let foodSet = {
-        foodId : foodList[i].foodId,
-        name : foodList[i].name,
+    for (let i in foodList) {
+      let foodSet = {
+        foodId: foodList[i].foodId,
+        name: foodList[i].name,
         kcal: foodList[i].kcal,
-        amount : foodList[i].amount,
-        forOne : foodList[i].forOne,
+        amount: foodList[i].amount,
+        forOne: foodList[i].forOne,
         measurement: foodList[i].measurement,
+      };
+      newMeal.foodList.push(foodSet);
     }
-        newMeal.foodList.push(foodSet);     
-    }
-    
-    await newMeal.save()
 
-    res.sendStatus(200)
-  }catch(err){
-    console.log(err)
+    await newMeal.save();
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     res.status(400).send({
-        errmessage: "나만의 식단추가에 실패했습니다"
-    })
-}
-})
+      errmessage: "나만의 식단추가에 실패했습니다",
+    });
+  }
+});
 
 //자기만의 식단 READ
-router.get('/meal',isAuth, async(req, res) => {
-    const userId = res.locals.user._id
-    try{
-    const meal = await Meal.find({ userId : userId })
+router.get("/meal", isAuth, async (req, res) => {
+  const userId = res.locals.user._id;
+  try {
+    const meal = await Meal.find({ userId: userId });
 
-    res.json(meal)
-    }catch(err){
-        console.log(err)
-        res.status(400).send({
-            errmessage: "나만의식단 불러오기에 실패했습니다"
-        })
-    }
-})
+    res.json(meal);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      errmessage: "나만의식단 불러오기에 실패했습니다",
+    });
+  }
+});
 
 //자기만의 식단 UPDATE
-router.put('/meal/:mealId',isAuth, async(req, res) => {
-  const { mealId } = req.params
-  const { name, foodList } = req.body
-  try{
-    const meal = await Meal.findById( mealId ).exec();
-    meal.name = name
-    meal.foodList = []
+router.put("/meal/:mealId", isAuth, async (req, res) => {
+  const { mealId } = req.params;
+  const { name, foodList } = req.body;
+  try {
+    const meal = await Meal.findById(mealId).exec();
+    meal.name = name;
+    meal.foodList = [];
 
-    for(let i in foodList){               
+    for (let i in foodList) {
       let foodSet = {
-          foodId : foodList[i].foodId,
-          name : foodList[i].name,
-          kcal: foodList[i].kcal,
-          amount : foodList[i].amount,
-          forOne : foodList[i].forOne,
-          measurement: foodList[i].measurement,
-      }
-          meal.foodList.push(foodSet);   
-      }
-    await meal.save()
-
-    res.sendStatus(200)
-    
-    }catch(err){
-    console.log(err)
-    res.status(400).send({
-        errorMessage: "나만의 식단 수정에 실패했습니다"
-    })
+        foodId: foodList[i].foodId,
+        name: foodList[i].name,
+        kcal: foodList[i].kcal,
+        amount: foodList[i].amount,
+        forOne: foodList[i].forOne,
+        measurement: foodList[i].measurement,
+      };
+      meal.foodList.push(foodSet);
     }
-})
+    await meal.save();
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({
+      errorMessage: "나만의 식단 수정에 실패했습니다",
+    });
+  }
+});
 
 //자기만의 식단 DELETE
-router.delete('/meal/:mealId', async(req, res) => {
-  const { mealId } = req.params
+router.delete("/meal/:mealId", async (req, res) => {
+  const { mealId } = req.params;
 
-  try{
-    await Meal.findByIdAndDelete( mealId )
-    res.sendStatus(200)
-  }catch(err){
-    console.log(err)
+  try {
+    await Meal.findByIdAndDelete(mealId);
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     res.status(400).send({
-        errorMessage: "나만의 식단 삭제에 실패했습니다"
-    })
-    }
-})
-
+      errorMessage: "나만의 식단 삭제에 실패했습니다",
+    });
+  }
+});
 
 export default router;
