@@ -83,25 +83,28 @@ router.put("/blind", checkPermission, async (req, res) => {
   }
 });
 
-router.get("/:date", isAuth, async (req, res) => {
-  const { date } = req.params;
-  const year = date.split("-")[0];
-  const month = date.split("-")[1];
-  const userId = res.locals.user._id;
-  try {
+router.get('/:date', isAuth, async(req, res) => {
+    const { date } = req.params;
+    const year = date.split('-')[0]
+    const month = date.split('-')[1]
+    const userId = res.locals.user._id
+    try{
     const record = await Record.find(
-      {
-        $and: [{ userId: userId }, { year: year }, { month: month }],
-      },
-      {
-        bmr: 1,
-        totalCalories: 1,
-        date: 1,
-      }
-    ).exec();
-  }catch(err){
-      console.log(err)
-  }
+        {
+            $and : [{ userId : userId }, { year : year }, { month : month }]
+        }, 
+        {
+            "bmr":1, "totalCalories":1, "date": 1,
+        }).exec()
+    
+    res.status(200).json({ record })
+    
+    }catch(err){
+    console.log(err)
+    res.status(400).send({
+        errorMessage: "캘린더 불러오기에 실패했습니다"
+    })
+}
 })
 
 router.get('/detail/:date', isAuth, async(req, res) => {
