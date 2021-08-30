@@ -11,7 +11,7 @@ const IP = process.env.IPADDRESS;
 const dbId = process.env.DBID;
 const dbPw = process.env.DBPW;
 
-export const conn = mongoose.createConnection(
+export const conn = mongoose.createConnection( //createConnection으로 기존 몽고db url를 받아 변수 conn에 할당 후 export
   `mongodb://${dbId}:${dbPw}@${IP}:27017/admin`,
   {
     dbName: "calories",
