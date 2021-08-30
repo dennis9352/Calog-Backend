@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
-import { conn2 } from "./indexAtlas.js";
+import { conn } from "./index.js";
 
-export const foodSchema = new mongoose.Schema({
+export const newFoodSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+  },
   name: {
     type: String,
   },
-  forOne: {
-    type: Number,
-    default: 0,
-  },
   kcal: {
-    type: Number,
+    type: String,
   },
-  isLike: {
-    type: Boolean,
+  forOne: {
+    type: String,
+    default: "0",
   },
   measurement: {
     type: String,
@@ -47,21 +47,21 @@ export const foodSchema = new mongoose.Schema({
     type: String,
     default: "-",
   },
+  unfattyAcid: {
+    type: String,
+    default: "-",
+  },
   transFattyAcid: {
     type: String,
     default: "-",
   },
-  unFattyAcid: {
-    type: String,
-    default: "-",
-  },
 });
 
-foodSchema.virtual("foodId").get(function () {
+newFoodSchema.virtual("mealId").get(function () {
   return this._id.toHexString();
 });
-foodSchema.set("toJSON", {
+newFoodSchema.set("toJSON", {
   virtuals: true,
 });
 
-export default conn2.model("Food", foodSchema);
+export default conn.model("NewFood", newFoodSchema);

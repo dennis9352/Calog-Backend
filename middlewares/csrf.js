@@ -1,19 +1,18 @@
-
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export const csrfCheck = (req, res, next) => {
   if (
-    req.method === 'GET' ||
-    req.method === 'OPTIONS' ||
-    req.method === 'HEAD'
+    req.method === "GET" ||
+    req.method === "OPTIONS" ||
+    req.method === "HEAD"
   ) {
     return next();
   }
 
-  const csrfHeader = req.get('x-csrf-token');
+  const csrfHeader = req.get("x-csrf-token");
   if (!csrfHeader) {
     console.warn('Missing required "x-csrf-token" header.', req.headers.origin);
-    return res.status(403).json({ message: 'Failed CSRF check' });
+    return res.status(403).json({ message: "Failed CSRF check" });
   }
 
   validateCsrfToken(csrfHeader)
@@ -24,13 +23,13 @@ export const csrfCheck = (req, res, next) => {
           req.headers.origin,
           csrfHeader
         );
-        return res.status(403).json({ message: 'Failed CSRF check' });
+        return res.status(403).json({ message: "Failed CSRF check" });
       }
       next();
     })
     .catch((err) => {
       console.log(err);
-      return res.status(500).json({ message: 'Something went wrong' });
+      return res.status(500).json({ message: "Something went wrong" });
     });
 };
 
