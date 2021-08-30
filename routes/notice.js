@@ -10,8 +10,10 @@ import { checkPermission } from "../middlewares/checkPermission.js";
 dotenv.config();
 const router = express.Router();
 
+// 슬랙 알림
 const slack = new Slack();
-slack.setWebhook(process.env.SLACKWEBHOOK);
+slack.setWebhook(process.env.SLACKWEBHOOK);         //슬랙 웹훅 주소랑 연결
+//일반 피드백
 const send = async (feedbackInfo) => {
   slack.webhook(
     {
@@ -28,6 +30,7 @@ const send = async (feedbackInfo) => {
     }
   );
 };
+// 음식추가요청
 const sendFood = async (feedbackInfo) => {
   slack.webhook(
     {
@@ -45,18 +48,18 @@ const sendFood = async (feedbackInfo) => {
   );
 };
 
+// 공지사항 쓰기
 router.post("/", isAuth, async (req, res) => {
-  // 공지사항 쓰기
   const { title, contents, date, password } = req.body;
   const user = res.locals.user;
-  const adminID = process.env.ADMINID;
+  const adminID = process.env.ADMINID;      //관리자 아이디
   if (user.email !== adminID) {
     res.status(400).send({
       errorMessage: "관리자 권한이 없습니다.",
     });
     return;
   }
-  const noticePassword = process.env.NOTICEPW;
+  const noticePassword = process.env.NOTICEPW;      //공지사항 비밀번호
   if (password !== noticePassword) {
     res.status(400).send({
       errorMessage: "비밀번호가 일치하지 않습니다.",
@@ -79,8 +82,8 @@ router.post("/", isAuth, async (req, res) => {
   }
 });
 
+// 공지사항 목록
 router.get("/", async (req, res) => {
-  // 공지사항 목록
   try {
     const notice = await Notice.find({});
     res.json({ notice });
@@ -106,19 +109,19 @@ router.get("/:noticeId", async (req, res) => {
   }
 });
 
+// 공지사항 업데이트
 router.put("/:noticeId", isAuth, async (req, res) => {
-  // 공지사항 업데이트
   const { noticeId } = req.params;
   const { title, contents, password } = req.body;
   const user = res.locals.user;
-  const adminID = process.env.ADMINID;
+  const adminID = process.env.ADMINID;      //관리자 아이디
   if (user.email !== adminID) {
     res.status(400).send({
       errorMessage: "관리자 권한이 없습니다.",
     });
     return;
   }
-  const noticePassword = process.env.NOTICEPW;
+  const noticePassword = process.env.NOTICEPW;       //공지사항 비밀번호
   if (password !== noticePassword) {
     res.status(400).send({
       errorMessage: "비밀번호가 일치하지 않습니다.",
@@ -141,20 +144,21 @@ router.put("/:noticeId", isAuth, async (req, res) => {
   }
 });
 
+//공지사항 삭제
 router.delete("/:noticeId", isAuth, async (req, res) => {
-  //공지사항 삭제
+
   const { noticeId } = req.params;
   const { password } = req.body;
   const user = res.locals.user;
 
-  const adminID = process.env.ADMINID;
+  const adminID = process.env.ADMINID;      //관리자 아이디
   if (user.email !== adminID) {
     res.status(400).send({
       errorMessage: "관리자 권한이 없습니다.",
     });
     return;
   }
-  const noticePassword = process.env.NOTICEPW;
+  const noticePassword = process.env.NOTICEPW;       //공지사항 비밀번호
   if (password !== noticePassword) {
     res.status(400).send({
       errorMessage: "비밀번호가 일치하지 않습니다.",
@@ -172,6 +176,7 @@ router.delete("/:noticeId", isAuth, async (req, res) => {
   }
 });
 
+//피드백 작성
 router.post("/feedback", checkPermission, async (req, res) => {
   const newdate = moment();
   const todayDate = newdate.format("YYYY-MM-DD HH:mm:ss");
@@ -233,6 +238,7 @@ router.post("/feedback", checkPermission, async (req, res) => {
   }
 });
 
+//음식추가요청
 router.post("/feedbackFood", isAuth, async (req, res) => {
   const newdate = moment();
   const todayDate = newdate.format("YYYY-MM-DD HH:mm:ss");

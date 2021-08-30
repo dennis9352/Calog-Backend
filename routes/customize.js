@@ -5,6 +5,7 @@ import FoodRecord from "../models/foodRecord.js";
 import Meal from "../models/meal.js";
 import NewFood from "../models/newFood.js";
 import Users from "../models/users.js";
+import Record from '../models/record.js'
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router.post("/newFood", isAuth, async (req, res) => {
     });
   }
 });
+
 //직접추가 READ
 router.get("/newFood", isAuth, async (req, res) => {
   const userId = res.locals.user._id;
@@ -82,6 +84,7 @@ router.delete("/newFood/:newFoodId", isAuth, async (req, res) => {
     });
   }
 });
+
 //자기만의 식단 CREATE
 router.post("/meal", isAuth, async (req, res) => {
   const userId = res.locals.user._id;
@@ -93,7 +96,7 @@ router.post("/meal", isAuth, async (req, res) => {
       foodList: [],
     });
 
-    for (let i in foodList) {
+    for (let i in foodList) {   //하나의 식단안에 음식리스트 정보 넣어주기
       let foodSet = {
         foodId: foodList[i].foodId,
         name: foodList[i].name,
@@ -138,9 +141,9 @@ router.put("/meal/:mealId", isAuth, async (req, res) => {
   try {
     const meal = await Meal.findById(mealId).exec();
     meal.name = name;
-    meal.foodList = [];
+    meal.foodList = [];   //기존 음식리스트 초기화
 
-    for (let i in foodList) {
+    for (let i in foodList) {   //새로 들어온 음식리스트 넣어주기
       let foodSet = {
         foodId: foodList[i].foodId,
         name: foodList[i].name,
@@ -162,7 +165,8 @@ router.put("/meal/:mealId", isAuth, async (req, res) => {
   }
 });
 
-router.put('/addMetaData', async(req,res) => {
+//업데이트 이후 부족한 데이터 채워넣어주기
+router.put('/fixData', async(req,res) => {
   const foodRecords = await FoodRecord.find({})
   try{
   for(let i in foodRecords){
@@ -175,12 +179,13 @@ router.put('/addMetaData', async(req,res) => {
       }
     }
   }
-  const records = Record.find({}).exec()
-  
-
+ 
   res.sendStatus(200)
 }catch(err){
   console.log(err)
+  res.status(400).send({
+    errorMessage: "실패"
+  })
 }
 })
 
