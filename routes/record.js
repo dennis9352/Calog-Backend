@@ -262,6 +262,10 @@ router.delete("/:recordId", isAuth, async (req, res) => {
     record.totalCalories = totalCalories;
     await record.save();
 
+    if (!record.foodRecords.length) {   //만약 하루 기록전체에서 식단 기록이 없다면 하루기록 삭제
+      await Record.findByIdAndDelete(recordId);
+    }
+
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
