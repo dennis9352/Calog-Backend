@@ -1,6 +1,5 @@
 import passport from "passport";
 import NaverStrategy from "passport-naver";
-
 import User from "../models/users.js";
 
 passport.serializeUser(function (user, done) {
@@ -15,7 +14,7 @@ passport.use(
     {
       clientID: process.env.NAVER_CLIENT_ID,
       clientSecret: process.env.NAVER_SECRET,
-      callbackURL: "https://2k1.shop/api/auth_naver/oauth", // 애플리케이션을 등록할 때 입력했던 callbackURL 을 입력해준다.
+      callbackURL: "https://2k1.shop/api/auth_naver/oauth", 
     },
     async (accessToken, refreshToken, profile, cb) => {
       try {
@@ -38,6 +37,7 @@ passport.use(
           return cb(null, newUser);
         }
       } catch (error) {
+        console.log(err)
         return cb(error);
       }
     }

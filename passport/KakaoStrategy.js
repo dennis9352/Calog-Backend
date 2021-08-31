@@ -4,7 +4,6 @@ import User from "../models/users.js";
 
 const KakaoStrategy = Kakao.Strategy;
 
-console.log(KakaoStrategy);
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -39,6 +38,7 @@ passport.use(
           return cb(null, newUser);
         }
       } catch (error) {
+        console.log(err)
         return cb(error);
       }
     }

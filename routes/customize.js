@@ -162,26 +162,25 @@ router.put("/meal/:mealId", isAuth, async (req, res) => {
   }
 });
 
-router.put('/addMetaData', async(req,res) => {
-  const foodRecords = await FoodRecord.find({})
-  try{
-  for(let i in foodRecords){
-    if(!foodRecords[i].forOne){
-      let oriFood = await Food.findById(foodRecords[i].foodId).exec()
-      if(oriFood){
-      foodRecords[i].forOne = oriFood.forOne
-      foodRecords[i].measurement = oriFood.measurement
-      foodRecords[i].save()
+router.put("/addMetaData", async (req, res) => {
+  const foodRecords = await FoodRecord.find({});
+  try {
+    for (let i in foodRecords) {
+      if (!foodRecords[i].forOne) {
+        let oriFood = await Food.findById(foodRecords[i].foodId).exec();
+        if (oriFood) {
+          foodRecords[i].forOne = oriFood.forOne;
+          foodRecords[i].measurement = oriFood.measurement;
+          foodRecords[i].save();
+        }
       }
     }
-  }
-  const records = Record.find({}).exec()
-  
+    const records = Record.find({}).exec();
 
-  res.sendStatus(200)
-}catch(err){
-  console.log(err)
-}
-})
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 export default router;
