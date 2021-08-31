@@ -9,9 +9,14 @@ import "moment-timezone";
 
 const router = express.Router();
 
+// 운동리스트 추천
 router.get("/exercise", checkPermission, async (req, res) => {
   try {
-    const exercise = await Exercise.aggregate([{ $sample: { size: 5 } }]);
+    const exercise = await Exercise.aggregate([
+        { 
+        $sample: { size: 5 } 
+        }
+    ]); //랜덤 5개
 
     res.status(200).json({ exercise });
   } catch (err) {
@@ -22,6 +27,7 @@ router.get("/exercise", checkPermission, async (req, res) => {
   }
 });
 
+// 대쉬보드
 router.get("/dash", checkPermission, async (req, res) => {
   const userId = res.locals.user._id;
   const newdate = moment();
@@ -53,6 +59,7 @@ router.get("/dash", checkPermission, async (req, res) => {
   }
 });
 
+// 블라인드 처리
 router.put("/blind", checkPermission, async (req, res) => {
   const { weightBlind, heightBlind, bmrBlind } = req.body;
   const user = res.locals.user;
@@ -83,6 +90,7 @@ router.put("/blind", checkPermission, async (req, res) => {
   }
 });
 
+// 캘린더 한달 기록
 router.get("/:date", isAuth, async (req, res) => {
   const { date } = req.params;
   const year = date.split("-")[0];
@@ -109,6 +117,7 @@ router.get("/:date", isAuth, async (req, res) => {
   }
 });
 
+//캘린더 기록 디테일
 router.get("/detail/:date", isAuth, async (req, res) => {
   const { date } = req.params;
   const userId = res.locals.user._id;
