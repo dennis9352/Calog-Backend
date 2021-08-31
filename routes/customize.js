@@ -178,11 +178,6 @@ router.put('/fixData', async(req,res) => {
       foodRecords[i].save()
       }
     }
-    const records = Record.find({}).exec();
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.log(err);
   }
  
   res.sendStatus(200)
