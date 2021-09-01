@@ -311,23 +311,21 @@ createIndex를 통해 음식 name 필드에 인덱스를 만들고 $search와 $m
 </div>
 </details>
 
-### About Us
+### &#128526; About Us
 
 ### BackEnd
-<img src = "https://user-images.githubusercontent.com/67377255/131719830-818e584e-a00e-4ff0-86cc-f77de8f7e853.png" width="10%" height="10%">이경원
-![image](https://user-images.githubusercontent.com/67377255/131720046-280b9260-b101-432b-aca5-d7285348e81a.png)오인웅
-![image](https://user-images.githubusercontent.com/67377255/131720564-2b8d4867-e77d-40a5-89c6-a8798041e26f.png)박진홍
+<img src = "https://user-images.githubusercontent.com/67377255/131719830-818e584e-a00e-4ff0-86cc-f77de8f7e853.png" width="20%" height="height 20%">이경원
+<img src = "https://user-images.githubusercontent.com/67377255/131720046-280b9260-b101-432b-aca5-d7285348e81a.png" width="20%" height="20%">오인웅
+<img src = "https://user-images.githubusercontent.com/67377255/131720564-2b8d4867-e77d-40a5-89c6-a8798041e26f.png" width="20%" height="20%">박진홍
 
 ### FrontEnd
-![image](https://user-images.githubusercontent.com/67377255/131720858-c30559f5-03bb-4ff8-9fac-446b2850d144.png)김나영
-![image](https://user-images.githubusercontent.com/67377255/131720943-94c4ad6b-a0c4-46d1-befd-48c29fd99642.png)최지혁
-![image](https://user-images.githubusercontent.com/67377255/131720997-e9c83da8-fbd1-4b13-96e9-ad332d1e888f.png)박용태
+<img src = "https://user-images.githubusercontent.com/67377255/131720858-c30559f5-03bb-4ff8-9fac-446b2850d144.png" width="20%" height="20%">김나영
+<img src = "https://user-images.githubusercontent.com/67377255/131720943-94c4ad6b-a0c4-46d1-befd-48c29fd99642.png" width="20%" height="20%">최지혁
+<img src = "https://user-images.githubusercontent.com/67377255/131720997-e9c83da8-fbd1-4b13-96e9-ad332d1e888f.png" width="20%" height="20%">박용태
 
 ### Designer(UI/UX)
-![image](https://user-images.githubusercontent.com/67377255/131721216-496e3870-00b6-474c-9777-5b406c8c1683.png)
-
-
-
+<img src = "https://user-images.githubusercontent.com/67377255/131724823-64bc315f-1860-4fb6-b384-ebbf8543f4a7.png" width="20%" height="20%">김민경
+<img src = "https://user-images.githubusercontent.com/67377255/131724365-0c5846cd-6a69-4f8c-80ae-128b4a1e3ea6.png" width="20%" height="20%">이경미
 
 
 
