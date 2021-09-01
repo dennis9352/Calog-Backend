@@ -314,7 +314,7 @@ createIndex를 통해 음식 name 필드에 인덱스를 만들고 $search와 $m
 ### About Us
 
 ### BackEnd
-![image](https://user-images.githubusercontent.com/67377255/131719830-818e584e-a00e-4ff0-86cc-f77de8f7e853.png)이경원
+<img src = "https://user-images.githubusercontent.com/67377255/131719830-818e584e-a00e-4ff0-86cc-f77de8f7e853.png" width="10%" height="10%">이경원
 ![image](https://user-images.githubusercontent.com/67377255/131720046-280b9260-b101-432b-aca5-d7285348e81a.png)오인웅
 ![image](https://user-images.githubusercontent.com/67377255/131720564-2b8d4867-e77d-40a5-89c6-a8798041e26f.png)박진홍
 
