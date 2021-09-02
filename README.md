@@ -85,10 +85,6 @@ npm: 6.14.13
 
   </tr>
   <tr>
-    <td>React</td>
-    <td>Front</td>
-  </tr>
-  <tr>
     <td >dotenv</td>
     <td>포트값외 중요한값 보안처리</td>
   </tr>
