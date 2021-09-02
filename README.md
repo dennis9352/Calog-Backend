@@ -34,7 +34,7 @@ node: v14.17.1
 npm: 6.14.13  
 
 ### &#128187;기술스택/라이브러리
-#### 라이브러리
+#### 기술스택
 <table width = "200" style="text-align:center;" >
   <tr>
     <th height = "40"> 종류</th>
