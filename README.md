@@ -29,12 +29,106 @@ Mongo Atlas 서버의 지역이 미국 버지니아로 설정 되어있어 서�
 #### 6. 보안
 CSRF 공격에 대한 보안 대책으로 Security Token 을 발급하여 검증하는 방식을 사용
 
+## ⚙Node & npm Version
+node: v14.17.1  
+npm: 6.14.13  
+
 ### &#128187;기술스택/라이브러리
 #### 라이브러리
+<table width = "200" style="text-align:center;" >
+  <tr>
+    <th height = "40"> 종류</th>
+    <th height = "40">이름</th>
+
+  </tr>
+  <tr>
+    <td>서버 프레임워크</td>
+    <td>Express</td>
+  </tr>
+  <tr>
+    <td >Database</td>
+    <td>MongoDB, AtlasDB</td>
+  </tr>
+  <tr>
+    <td >서버 모니터링</td>
+    <td>netData</td>
+  </tr>
+  <tr>
+    <td >에러 모니터링</td>
+    <td>sentry</td>
+  </tr>
+  <tr>
+    <td >CI</td>
+    <td>travis CI</td>
+  </tr>
+  <tr>
+    <td >CD</td>
+    <td>CodeDeploy</td>
+  </tr>
+  <tr>
+    <td >빌드파일 저장소</td>
+    <td>S3</td>
+  </tr>
+  <tr>
+    <td >Application 구축 software</td>
+    <td>Docker</td>
+  </tr>
+  <tr>
+    <td >로드밸런스</td>
+    <td>nginx</td>
+  </tr>
+
+<table width = "200" style="text-align:center;" >
+  <tr>
+    <th height = "40">라이브러리</th>
+    <th height = "40">Appliance</th>
+
+  </tr>
+  <tr>
+    <td>React</td>
+    <td>Front</td>
+  </tr>
+  <tr>
+    <td >dotenv</td>
+    <td>포트값외 중요한값 보안처리</td>
+  </tr>
+  <tr>
+    <td >Mongoose</td>
+    <td>MongoDB 데이터 모델링</td>
+  </tr>
+  <tr>
+    <td >Cors</td>
+    <td>Request Resource 제한</td>
+  </tr>
+   <tr>
+    <td>passport</td>
+    <td> 소셜 로그인 </td>
+  </tr>
+   <tr>
+    <td>bcrypt</td>
+    <td> 암호화 </td>
+  </tr>
+  <tr>
+    <td >jsonwebtoken</td>
+    <td> 암호화 </td>
+  </tr>
+   <tr>
+    <td> eslint </td>
+    <td> 클린코드 </td>
+  </tr>
+   <tr>
+    <td>prettier</td>
+    <td> 클린코드 </td>
+  </tr>
+   <tr>
+    <td>eslint-config-prettier,eslint-plugin-prettier
+</td>
+    <td> eslint, prettier 충돌방지 </td>
+  </tr>
+</table>
 bcrypt,express-validator,jsonwebtoken,passport,passport-google-oauth20,passport-kakao,passport-naver,validator,
 eslint,prettier,eslint-config-prettier,eslint-plugin-prettier
-#### 기술스택
-mongodb atlas,netdata
+
 
 ### &#127919; Backend Trouble Shooting
 
@@ -221,57 +315,32 @@ createIndex를 통해 음식 name 필드에 인덱스를 만들고 $search와 $m
 <summary>CICD 과부하 현상 처리 및 에러 모니터링</summary>
 <div markdown="1">       
 
- ![image](https://user-images.githubusercontent.com/67377255/131714684-19863157-ca81-42d9-abc9-187b6bf534c5.png)
-
     서비스는 지속적으로 제공해주어야 하는데 서버가 뻗어 버리거나 예기치못한 오류로 인해서 서버가 다운되면?
 
-    오토 스케일링
-
-    쿠버네티스는 오토스케일링 옵션을 지원하나 도커 스웜은 안하므로 미리 스케일 아웃을 진행해야한다. 
-  그래서 레플리카 셋업으로 매니저 노드와 워커 노드를 나눠서 레플리카로 서버를 나누어서 띄워서 트래픽을 분산시키면 
-  되지만 현재 유저 확보가 되지 않은 상황에선 미리 스케일 아웃은 오버엔지니어링이라 생각해서 일단 하나의 서버로 돌리고 
-  셀프 힐링 옵션만 주기로 결정.
-
-    오토 리스타트 or 서비스 리커버리
-
-    쿠버네티스가 제공하는 오토 스케일링, 오토 리스타트가 있다 하지만 현업에서 많은 컨테이너를 
-  관리와 운영을 하기위해 쓰는 오케스트레이션이므로 오버엔진이어링이라 판단. 
-  그래서 docker compose파일을 띄울때 restart옵션
+    오토 리스타트 or 셀프힐링
+  
+  docker 컨테이너를 띄울때 restart옵션
   "—restart on-failure[:maxretries]" 를 적용하여 exit 0(정상적인 종료)이 아닐경우 
   알아서 다시 리스타트 할수있도록 설정해놓고
   sentry로 에러가 났을시 에러로그를 수집하고 slack으로 알려줄수 있게 설정해서 프로젝트를 개선하는 방향.
 
-    아니면 docker swarm?
+    오토 스케일링
 
-    도커머신 = 도커를 굳이 다시 깔고 이미지 띄우고 설정하고 할필요없이 호스트 도커환경을 
-  프로비저닝한다음 거기서 도커가 돌아감. 
-  그래서 서버 2개 더 팠는데 서버 둘다 일일이 도커 설치하고 설정하고 할필요없이 도커머신 하나로 다 됨.
+    
+  쿠버네티스는 오토스케일링 옵션을 지원하나 도커 스웜은 안하므로 미리 스케일 아웃을 진행해야한다. 
+  그래서 레플리카 셋업으로 매니저 노드와 워커 노드를 나눠서 레플리카로 서버를 나누어서 띄워서 트래픽을 분산시키면 
+  되지만 현재 유저 확보가 되지 않은 상황에선 미리 스케일 아웃은 오버엔지니어링이라 생각해서 일단 하나의 서버로 돌리고 
+  셀프 힐링 옵션만 주기로 결정.
 
-   ![image](https://user-images.githubusercontent.com/67377255/131714781-50e0873c-288c-4ee4-92e6-5b96d420593a.png)
+  ![image](https://user-images.githubusercontent.com/85466642/131809895-2ed4a915-492c-48ad-af32-56cdfc0847cc.png)
 
-  ![image](https://user-images.githubusercontent.com/67377255/131714804-897ec169-4f66-4012-8be3-264a9b1d0c42.png)
-
- ![image](https://user-images.githubusercontent.com/67377255/131714830-80fac48c-9012-4cda-8417-d093e757247f.png)
-
-    도커 스웜을 공부하고 구현하기까지는 성공을 했다. 하지만 이것또한 현재 상황에선 오버엔지니어링이라고 생각한다. 
+    
+  도커 스웜을 공부하고 구현하기까지는 성공을 했다. 하지만 이것또한 현재 상황에선 오버엔지니어링이라고 생각한다. 
   하지만 개발자는 현재 비즈니스 상황에 따라 적절한 엔지니어링 수준을 결정하는 능력이 중요하다고 생각한다. 
   사용자가 폭팔적으로 증가했을 때 기술적 준비가 안 되어 있다면 개발자와 서비스 모두 큰 타격을 받는다. 
   그래서 추후에 유저가 많아졌을 경우를 대비해 도커스웜을 바로 도입할 수 있도록만 준비를 해두고 
   지금 아키텍처를 가지고 가는게 맞는거같다.
 
-   ![image](https://user-images.githubusercontent.com/67377255/131714902-7d7601be-9cd4-423e-a881-fb307e844923.png)
-
-    모니터링
-
-    - cAdvisor / node Exporter + prometheus + grafana+ alertManager 모니터링
-![image](https://user-images.githubusercontent.com/67377255/131714939-28986de5-af90-4c4d-86ec-ffe7f97db808.png)
-
-    이것또한 현업에서 많은 컨테이너들의 리소스 사용율을 한눈에 보기에 좋은 모니터링 툴이다. 당연히 리소스 낭비다. 
-  이 프로젝트는 서버 2개만 껐다켰다 하면서 돌아가는 서버를 모니터링 하기에는 오버엔지니어링이다.
-
-    - sentry 모니터링
-
-    에러 모니터링과 동시에 slack alert 시스템도 갖춘 심플하게 구축할수 있는 좋은 툴이다
 
 </div>
 </details>
