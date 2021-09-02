@@ -97,7 +97,7 @@ npm: 6.14.13
     <td>Request Resource 제한</td>
   </tr>
    <tr>
-    <td>passport</td>
+    <td>passport,passport-google-oauth20,passport-kakao,passport-naver</td>
     <td> 소셜 로그인 </td>
   </tr>
    <tr>
@@ -120,6 +120,11 @@ npm: 6.14.13
     <td>eslint-config-prettier,eslint-plugin-prettier
 </td>
     <td> eslint, prettier 충돌방지 </td>
+  </tr>
+  <tr>
+    <td>validator,express-validator
+</td>
+    <td> 유효성 검사 </td>
   </tr>
 </table>
 bcrypt,express-validator,jsonwebtoken,passport,passport-google-oauth20,passport-kakao,passport-naver,validator,
