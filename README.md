@@ -127,8 +127,6 @@ npm: 6.14.13
     <td> 유효성 검사 </td>
   </tr>
 </table>
-bcrypt,express-validator,jsonwebtoken,passport,passport-google-oauth20,passport-kakao,passport-naver,validator,
-eslint,prettier,eslint-config-prettier,eslint-plugin-prettier
 
 
 ### &#127919; Backend Trouble Shooting
